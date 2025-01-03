@@ -9,10 +9,10 @@ class CustomUser(AbstractUser):
 
 
 class Room(models.Model):
+    creator = models.ForeignKey(CustomUser, related_name="rooms")
     title = models.CharField(max_length=50)
     body = models.CharField(null=True)
     # creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="ad")
-    creator = models.ForeignKey(CustomUser, related_name="rooms")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

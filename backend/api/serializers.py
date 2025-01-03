@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Room
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,3 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ['creator', 'title', 'body', 'created_at', 'updated_at']
+        extra_kwargs = {"creator": {'read_only': True}}
+    
+    def create(self, validated_data):
+        room = Room.objects.create(**validated_data)
+        return 
