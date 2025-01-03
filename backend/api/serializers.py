@@ -16,9 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ['creator', 'title', 'body', 'created_at', 'updated_at']
+        fields = ['id', 'creator', 'title', 'body', 'created_at', 'updated_at']
         extra_kwargs = {"creator": {'read_only': True}}
     
     def create(self, validated_data):
         room = Room.objects.create(**validated_data)
-        return 
+        return room
