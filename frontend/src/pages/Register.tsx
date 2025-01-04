@@ -3,8 +3,10 @@ import { useState } from 'react';
 import api from "../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
 import STATES_UNIVERSITIES from '../states_universities';
+import { useNavigate } from 'react-router';
 
 export default function Register() {
+  const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     email: "",
@@ -75,12 +77,9 @@ export default function Register() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await api.post('/api/register/', formData, {
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
+        const response = await api.post('/api/register/', formData)
         console.log('Registration Successful', response.data);
+        navigate('/login')
       } catch (error) {
         if (error.response) {
           const errorMessage = error.response.data.message || 'Registration failed';

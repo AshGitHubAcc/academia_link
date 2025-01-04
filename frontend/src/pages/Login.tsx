@@ -1,16 +1,39 @@
-
+import { useState } from "react"
+import api from "../api"
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
+import { useNavigate } from "react-router"
 
 export default function Login() {
+    const navigate = useNavigate()
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
 
 
+    async function handleSubmit(e) {
+        e.preventDefault()
+        
+        try {
+            const response = await api.post('/api/token/', {'username': email, 'password': password})
+            localStorage.setItem(ACCESS_TOKEN, response.data.access)
+            localStorage.setItem(REFRESH_TOKEN, response.data.refresh)
+            console.log('Registration Successful', response.data);
+            navigate('/home')
+
+
+        } catch (error) {
+            console.log("ERROR=========", error)
+        }
+
+    }
 
 
     return (
     <div className="h-full flex justify-center items-center">
 
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-300">
                     Email
@@ -18,6 +41,8 @@ export default function Login() {
                 <input
                     type="text"
                     name="email"
+                    value={email}
+                    onChange={(e)=>setEmail(e.target.value)}
                     className="w-full px-3 py-2 border rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 />
                 </div>
@@ -29,6 +54,8 @@ export default function Login() {
                 <input
                     type="text"
                     name="password"
+                    value={password}
+                    onChange={(e)=>setPassword(e.target.value)}
                     className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
                 </div>

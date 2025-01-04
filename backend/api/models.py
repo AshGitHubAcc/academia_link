@@ -8,13 +8,16 @@ class CustomUser(AbstractUser):
     state = models.CharField(max_length=30, default='')
     university = models.CharField(max_length=100, default='')
 
-
+# Call users pirates 
+# Call Room a Dock
 class Room(models.Model):
     id = models.AutoField(primary_key=True)
     # creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="ad")
     creator = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL, related_name="rooms")
     title = models.CharField(max_length=50)
     body = models.CharField(null=True, max_length=1000)
+    # images = []
+    # videos = []
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

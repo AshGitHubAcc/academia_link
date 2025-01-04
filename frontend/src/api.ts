@@ -1,3 +1,4 @@
+
 import axios from "axios"
 import { ACCESS_TOKEN } from "./constants"
 
@@ -15,7 +16,9 @@ api.interceptors.request.use(
         const token = localStorage.getItem(ACCESS_TOKEN)
 
         if (token) {
+            // console.log("HERE=====================\n", `Bearer ${token}`)
             config.headers.Authorization = `Bearer ${token}`
+
         }
         return config
     },

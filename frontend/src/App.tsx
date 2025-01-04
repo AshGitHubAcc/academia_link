@@ -1,13 +1,14 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 import Login from "./pages/login"
 import Register from "./pages/register"
 import NotFound from "./pages/NotFound"
-
-function Logout() {
-  localStorage.clear()
-  return <Navigate to="/login" />
-}
+import Home from "./pages/Home"
+import CreateDock from "./pages/CreateDock"
+// function Logout() {
+//   localStorage.clear()
+//   return <Navigate to="/login" />
+// }
 
 
 function App() {
@@ -23,6 +24,10 @@ function App() {
           <Route path="/register" element={<Register/>} />
           <Route path="/login" element={<Login/>} />
           {/* <Route path="/logout" element={<Logout/>} /> */}
+
+          <Route path='/home' element={<Home/>} />
+          <Route path='/create-dock' element={<CreateDock/>} />
+
 
 
 

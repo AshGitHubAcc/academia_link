@@ -19,6 +19,6 @@ class RoomSerializer(serializers.ModelSerializer):
         fields = ['id', 'creator', 'title', 'body', 'created_at', 'updated_at']
         extra_kwargs = {"creator": {'read_only': True}}
     
-    def create(self, validated_data):
-        room = Room.objects.create(**validated_data)
-        return room
+    # def create(self, validated_data):
+    #     room = Room.objects.create(**validated_data)
+    #     return room

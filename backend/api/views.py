@@ -63,23 +63,33 @@ class CreateUser(generics.CreateAPIView):
 
 
 
-class CreateRoom(generics.CreateAPIView):
+class RoomView(generics.ListCreateAPIView):
     serializer_class = RoomSerializer   
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     # user = self.request.user
     # queryset = Room.objects.filter(creator=user)
     def get_queryset(self):
+        print("View class is being accessed")  # Add this line
+
+        # print("Auth header:", self.request.headers.get('Authorization'))
         user = self.request.user
         queryset = Room.objects.filter(creator=user)
         return queryset
+    
 
-    def create(self, serializer):
+
+    # def create(self, serializer):
+    #     if serializer.is_valid():
+    #         serializer.save(creator=self.request.user)
+    #     else:
+    #         print(serializer.errors)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(creator=self.request.user)
-        else:
-            print(serializer.errors)
-
+            serializer.save(creator=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class DeleteRoom(generics.CreateAPIView):
     queryset = Room.objects.all()

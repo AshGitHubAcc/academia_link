@@ -4,7 +4,7 @@ export default function NotFound() {
 
     return (
         <div>
-            NotFound
+            <h1>Page not found</h1>
         </div>
     )
 }
