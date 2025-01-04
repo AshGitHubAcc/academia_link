@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import api from "../api"
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
+
+
 
 const universities = {
   "California": ["Stanford", "UC Berkeley", "UCLA"],
@@ -37,9 +41,8 @@ export default function Register() {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
+    } else if ( (formData.password.length < 8) || !(/\d/.test(formData.password) ))
+      newErrors.password = "Password must be at least 8 characters and contain numbers";
 
     if (!formData.state) {
       newErrors.state = "Select a state";
@@ -64,17 +67,30 @@ export default function Register() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
 
     if (Object.keys(newErrors).length === 0) {
-      fetch('http://127.0.0.1:8000/account/register/',
-        {
-          method: "POST",
-          body: formData
-        }
-      )
+
+      try {
+        const response = await api.post('/api/register/', formData, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        console.log('Registration Successful', response.data);
+      } catch (error) {
+          if (error.response) {
+              const errorMessage = error.response.data.message || 'Registration failed';
+              console.log("Error: ", errorMessage);
+          } else {
+              console.log("Network error:", error);
+          }
+      }
+
+
+      
     } else {
       setErrors(newErrors);
     }

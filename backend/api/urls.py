@@ -6,7 +6,7 @@ from . import views
 
 urlpatterns = [
     path('auth/', include('rest_framework.urls')),
-    path('register/', views.CreateUser.as_view, name='register'),
+    path('register/', views.CreateUser.as_view(), name='register'),
     path('create-room/', views.CreateRoom.as_view(), name='create_room'),
     path('token/', TokenObtainPairView.as_view(), name='get_token'),
     path('token-refresh/', TokenRefreshView.as_view(), name='refresh_token'),
