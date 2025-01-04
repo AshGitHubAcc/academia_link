@@ -1,16 +1,8 @@
+
 import { useState } from 'react';
-import api from "../api"
+import api from "../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
-
-
-
-const universities = {
-  "California": ["Stanford", "UC Berkeley", "UCLA"],
-  "New York": ["Columbia", "NYU", "Cornell"],
-  "Texas": ["UT Austin", "Texas A&M", "Rice"]
-};
-
-
+import STATES_UNIVERSITIES from '../states_universities';
 
 export default function Register() {
 
@@ -22,6 +14,8 @@ export default function Register() {
     university: ""
   });
   const [errors, setErrors] = useState({});
+  const [suggestions, setSuggestions] = useState([]);
+  const [universitySuggestions, setUniversitySuggestions] = useState([]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -32,7 +26,6 @@ export default function Register() {
     else if (!formData.email.includes('@') || !formData.email.endsWith('.edu'))
       newErrors.email = "Email has to contain '@' and end with '.edu'";
 
-
     if (!formData.name) {
       newErrors.name = "Name is required";
     } else if (formData.name.length < 2) {
@@ -41,7 +34,7 @@ export default function Register() {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if ( (formData.password.length < 8) || !(/\d/.test(formData.password) ))
+    } else if (formData.password.length < 8 || !(/\d/.test(formData.password)))
       newErrors.password = "Password must be at least 8 characters and contain numbers";
 
     if (!formData.state) {
@@ -60,8 +53,17 @@ export default function Register() {
     setFormData(prev => ({
       ...prev,
       [name]: value,
-      ...(name === 'state' ? { university: '' } : {})
+      ...(name === 'state' ? { university: '', universitySuggestions: [] } : {})
     }));
+
+    if (name === 'state') {
+      const matchedStates = value ? Object.keys(STATES_UNIVERSITIES).filter(state => state.toLowerCase().includes(value.toLowerCase())) : [];
+      setSuggestions(matchedStates);
+    } else if (name === 'university') {
+      const matchedUniversities = formData.state ? STATES_UNIVERSITIES[formData.state].filter(uni => uni.toLowerCase().includes(value.toLowerCase())) : [];
+      setUniversitySuggestions(matchedUniversities);
+    }
+
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -72,25 +74,21 @@ export default function Register() {
     const newErrors = validateForm();
 
     if (Object.keys(newErrors).length === 0) {
-
       try {
         const response = await api.post('/api/register/', formData, {
-            headers: {
-                'Content-Type': 'application/json',
-            }
+          headers: {
+            'Content-Type': 'application/json',
+          }
         });
         console.log('Registration Successful', response.data);
       } catch (error) {
-          if (error.response) {
-              const errorMessage = error.response.data.message || 'Registration failed';
-              console.log("Error: ", errorMessage);
-          } else {
-              console.log("Network error:", error);
-          }
+        if (error.response) {
+          const errorMessage = error.response.data.message || 'Registration failed';
+          console.log("Error: ", errorMessage);
+        } else {
+          console.log("Network error:", error);
+        }
       }
-
-
-      
     } else {
       setErrors(newErrors);
     }
@@ -116,7 +114,7 @@ export default function Register() {
                 <p className="text-sm text-red-600">{errors.email}</p>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Name
@@ -153,17 +151,19 @@ export default function Register() {
               <label className="block text-sm font-medium text-gray-700">
                 State
               </label>
-              <select
+              <input
+                type="text"
                 name="state"
                 value={formData.state}
                 onChange={handleChange}
+                list="states"
                 className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select State</option>
-                {Object.keys(universities).map(state => (
-                  <option key={state} value={state}>{state}</option>
+              />
+              <datalist id="states">
+                {suggestions.map(state => (
+                  <option key={state} value={state} />
                 ))}
-              </select>
+              </datalist>
               {errors.state && (
                 <p className="text-sm text-red-600">{errors.state}</p>
               )}
@@ -173,18 +173,20 @@ export default function Register() {
               <label className="block text-sm font-medium text-gray-700">
                 University
               </label>
-              <select
+              <input
+                type="text"
                 name="university"
                 value={formData.university}
                 onChange={handleChange}
+                list="universities"
                 className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 disabled={!formData.state}
-              >
-                <option value="">Select University</option>
-                {formData.state && universities[formData.state].map(uni => (
-                  <option key={uni} value={uni}>{uni}</option>
+              />
+              <datalist id="universities">
+                {universitySuggestions.map(uni => (
+                  <option key={uni} value={uni} />
                 ))}
-              </select>
+              </datalist>
               {errors.university && (
                 <p className="text-sm text-red-600">{errors.university}</p>
               )}
