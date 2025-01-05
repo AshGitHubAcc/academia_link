@@ -10,6 +10,7 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='get_token'), # login
     path('token-refresh/', TokenRefreshView.as_view(), name='refresh_token'),
 
-    path('room/', views.RoomView.as_view(), name='room'),
-    path('room/<int:id>', views.RoomView.as_view(), name='room2'),
-]
+    path('rooms/', views.RoomListCreateView.as_view(), name='room-list-create'),
+    path('rooms/<int:id>/', views.RoomDetailView.as_view(), name='room-detail'),
+
+]   
