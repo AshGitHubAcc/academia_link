@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from .models import CustomUser, Room
-from .serializers import UserSerializer, RoomSerializer
+from .serializers import UserSerializer, RoomSerializer, MessageSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -129,4 +129,22 @@ class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
         self.perform_update(serializer)
         return Response({'message   ': "Sucessful"})
 
+class MessageListCreateView(generics.ListCreateAPIView):
+    serializer_class = RoomSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Room.objects.all().order_by('-created_at')
+    
+    # def perform_create(self, serializer):
+    #     def validate_data():
+    #         if self.request.data['title'] == '':
+    #             return "Title can't be empty"
+    #         elif len(self.request.data['body']) > 1000:
+    #             return 'Max characters for body reached'
+    #         return "valid"
 
+    #     if validate_data() == 'valid':
+    #         serializer.save(creator=self.request.user)
+    #         return Response({'message': "sucessful"}, status=status.HTTP_200_OK)
+    #     return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

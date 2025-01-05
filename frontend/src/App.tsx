@@ -7,6 +7,7 @@ import Home from "./pages/Home"
 import CreateDock from "./pages/CreateDock"
 import Dock from "./pages/Dock"
 import UpdateDock from "./pages/UpdateDock"
+import Testing from "./pages/Testing"
 // function Logout() {
 //   localStorage.clear()
 //   return <Navigate to="/login" />
@@ -31,6 +32,11 @@ function App() {
           <Route path='/home/dock/:id' element={<Dock/>} />
           <Route path='/home/create-dock' element={<CreateDock/>} />
           <Route path='/home/update-dock' element={<UpdateDock/>} />
+
+          <Route path='/testing' element={<Testing/>} />
+
+
+
 
 
 
