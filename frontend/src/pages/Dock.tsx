@@ -107,25 +107,44 @@
 import api from '../api'
 import image from '../../public/vite.svg'
 import { useParams } from 'react-router'
+import { useEffect, useState } from 'react'
+import { format } from 'date-fns'
+
 
 
 export default function Dock() {
-
     const { id } = useParams()
+    const [dock, setDock] = useState({})
+    const [messages, setMessages] = useState([])
 
 
     async function fetchData() {
         try {
-            const response = await api.get(`/api/rooms/${parseInt(id)}`)
-            console.log(response)
+            const response = await api.get(`/api/rooms/${parseInt(id)}/`)
+
+            setDock(response.data)
+            setMessages(response.data.messages)
+
+            // console.log("Before state update:", messages); // This logs the old value (empty array)
+            console.log(response.data)
+            
         } catch (error) {
             console.log(error)
         }
     }
-    fetchData()
+
+    // Add a useEffect to monitor changes to messages
+    useEffect(() => {
+        console.log("After state update:", messages); // This logs the updated state
+    }, [messages]);
 
 
-    const messages = [
+    useEffect(()=>{
+        fetchData()
+    }, []) 
+
+
+    const messages123 = [
     { id: 1, user: 'Alex Kim', content: "Hey everyone! How's the project going?", time: '2:30 PM', avatar: '/api/placeholder/40/40' },
     { id: 2, user: 'Sarah Chen', content: 'Making good progress! Just pushed some updates.', time: '2:31 PM', avatar: '/api/placeholder/40/40' },
     { id: 3, user: 'Mike Johnson', content: "I'll review them soon.", time: '2:35 PM', avatar: '/api/placeholder/40/40' },
@@ -146,15 +165,17 @@ export default function Dock() {
                                 <img src={image} alt="" />
                             </div>
                             <div className='flex flex-col gap-2'>
-
+                                
                                 <div className='underline'>
-                                    {ele.user} {ele.time}
+                                    {ele.creator.username} --- {format(new Date(ele.created_at), 'hh:mm a, MM/dd/yyyy')}
                                 
                                 </div>
 
                                 <div>
-                                    {ele.content}
+                                    {ele.body}
                                 </div>
+
+                                
                                 
                                 
                             </div>

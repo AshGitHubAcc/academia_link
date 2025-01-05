@@ -6,6 +6,7 @@ import NotFound from "./pages/NotFound"
 import Home from "./pages/Home"
 import CreateDock from "./pages/CreateDock"
 import Dock from "./pages/Dock"
+import UpdateDock from "./pages/UpdateDock"
 // function Logout() {
 //   localStorage.clear()
 //   return <Navigate to="/login" />
@@ -27,8 +28,9 @@ function App() {
           {/* <Route path="/logout" element={<Logout/>} /> */}
           
           <Route path='/home' element={<Home/>} />
-          <Route path='//home/create-dock' element={<CreateDock/>} />
           <Route path='/home/dock/:id' element={<Dock/>} />
+          <Route path='/home/create-dock' element={<CreateDock/>} />
+          <Route path='/home/update-dock' element={<UpdateDock/>} />
 
 
 
