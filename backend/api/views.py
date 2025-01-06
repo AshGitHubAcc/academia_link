@@ -4,11 +4,12 @@ from rest_framework import generics, status
 from django.core.exceptions import PermissionDenied
 
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
-from .models import CustomUser, Room
-from .serializers import UserSerializer, RoomSerializer, MessageSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+
+from .models import CustomUser, Room, Message
+from .serializers import UserSerializer, RoomSerializer, MessageSerializer
 
 import json
 import os
@@ -75,14 +76,16 @@ class RoomListCreateView(generics.ListCreateAPIView):
         def validate_data():
             if self.request.data['title'] == '':
                 return "Title can't be empty"
-            elif len(self.request.data['body']) > 1000:
+            if len(self.request.data['body']) > 1000:
                 return 'Max characters for body reached'
             return "valid"
+        
+        validate_message = validate_data()
 
-        if validate_data() == 'valid':
+        if validate_message == 'valid':
             serializer.save(creator=self.request.user)
             return Response({'message': "sucessful"}, status=status.HTTP_200_OK)
-        return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': validate_message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -130,21 +133,34 @@ class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response({'message   ': "Sucessful"})
 
 class MessageListCreateView(generics.ListCreateAPIView):
-    serializer_class = RoomSerializer
+    serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return Room.objects.all().order_by('-created_at')
-    
-    # def perform_create(self, serializer):
-    #     def validate_data():
-    #         if self.request.data['title'] == '':
-    #             return "Title can't be empty"
-    #         elif len(self.request.data['body']) > 1000:
-    #             return 'Max characters for body reached'
-    #         return "valid"
+        # return Message.objects.all().order_by('-created_at')
+        return [] # any logged in user will be able to get all the messages so I returend an empty array
 
-    #     if validate_data() == 'valid':
-    #         serializer.save(creator=self.request.user)
-    #         return Response({'message': "sucessful"}, status=status.HTTP_200_OK)
-    #     return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def perform_create(self, serializer):
+
+        def validate_data():
+            if self.request.data['body'] == '':
+                return "Message body can't be empty"
+            if not self.request.data['room']:
+                return "Room ID is required"
+            return "valid"
+        
+        validate_message = validate_data()
+
+        if validate_message == 'valid':
+
+            # data['room'] is room id
+            room = get_object_or_404(Room, id=self.request.data['room'])
+
+            serializer.save(
+                creator=self.request.user,
+                room=room,
+                body=self.request.data['body']
+            )
+            return Response({'message': "successful"}, status=status.HTTP_201_CREATED)
+        return Response({'message': validate_message}, status=status.HTTP_400_BAD_REQUEST)

@@ -116,6 +116,9 @@ export default function Dock() {
     const { id } = useParams()
     const [dock, setDock] = useState({})
     const [messages, setMessages] = useState([])
+    const [sendingMessage, setSendingMessage] = useState('')
+
+    const [messageSent, setMessageSent] = useState(0)
 
 
     async function fetchData() {
@@ -124,8 +127,6 @@ export default function Dock() {
 
             setDock(response.data)
             setMessages(response.data.messages)
-
-            // console.log("Before state update:", messages); // This logs the old value (empty array)
             console.log(response.data)
             
         } catch (error) {
@@ -133,16 +134,26 @@ export default function Dock() {
         }
     }
 
-    // Add a useEffect to monitor changes to messages
-    useEffect(() => {
-        console.log("After state update:", messages); // This logs the updated state
-    }, [messages]);
-
 
     useEffect(()=>{
         fetchData()
-    }, []) 
+    }, [messageSent])
 
+
+    async function handleMessageSubmit(e) {
+        e.preventDefault()
+
+        try {
+            const response = await api.post(`/api/messages/`, {
+                'body': sendingMessage,
+                'room': dock.id,     
+            })
+            console.log(response)
+            setMessageSent(messageSent+1)
+        } catch (error) {
+            console.log("Error: ", error)
+        }
+    }
 
     const messages123 = [
     { id: 1, user: 'Alex Kim', content: "Hey everyone! How's the project going?", time: '2:30 PM', avatar: '/api/placeholder/40/40' },
@@ -183,12 +194,12 @@ export default function Dock() {
                     ))}
                 </div>
 
-                <div className="bg-gray-700 border flex-1 flex">
-                    <textarea name="message" id="" className='h-full w-full bg-gray-700' placeholder='Write message...'></textarea>
-                    <div className='bg-gray-600 w-20 flex justify-center items-center'>
-                        send-
-                    </div>
-                </div>
+
+                <form action="" className="bg-gray-700 border flex-1 flex" onSubmit={handleMessageSubmit}>
+                    <textarea name="message" value={sendingMessage} onChange={(e)=>setSendingMessage(e.target.value)} className='h-full w-full bg-gray-700' placeholder='Write message...'></textarea>
+                    <button>Send</button>
+
+                </form>
                 
             </div>
 

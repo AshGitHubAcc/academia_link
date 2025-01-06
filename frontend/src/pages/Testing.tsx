@@ -9,6 +9,7 @@ export default function Testing() {
         try {
 
             const response = await api.get(`/api/messages/`)
+            console.log(response.data)
     
             
         } catch (error) {
