@@ -24,13 +24,22 @@ export default function UpdateDock() {
             return null
         }
         setError(false)
+
+        
         try {
 
             const response = await api.patch(`/api/rooms/${dockData.id}/`, dockInfo)
-            console.log("Scuessful", response)
-            navigate('/home')
+            
+            if (response.data.message === "successful") {
+                console.log("Server response: request valid\n", response.data);
+                navigate('/home')
+            } else {
+                console.log("Server response: request invalid\n", response.data);
+            }
+            
         } catch (error) {
-            console.log('erorr: ', error)
+            console.error("=========== API request error ===========\n", error.message)
+            // server error
         }
 
     }

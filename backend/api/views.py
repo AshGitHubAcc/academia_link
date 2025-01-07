@@ -72,51 +72,52 @@ class RoomListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         try:
             all_rooms = Room.objects.all().order_by('-created_at')
+            print(Fore.GREEN, "=========", "GET: All Rooms Successful", "=========", Style.RESET_ALL)
             return all_rooms
         except Exception as e:
-            print(Fore.RED, "=========", "ERRORS", "=========\n", e, Style.RESET_ALL)
+            print(Fore.YELLOW, "=========", "ERRORS", "=========\n",e, Style.RESET_ALL)
             return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def create(self, serializer):
-        print("==========")
-        return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
+    def create(self, request):
+        try:
 
-        # try:
+            data = request.data
+            serializer = self.get_serializer(data=data)
 
-        #     request = self.request
-        #     data = self.request.data
 
-        #     def validate_data():
-        #         if data['title'].strip() == '':
-        #             return "Title can't be empty or only spaces"
-        #         if len(data['body'].strip()) > 1000:
-        #             return 'Max characters for body reached'
-        #         return "valid"
+            def validate_data():
+                if data['title'].strip() == '':
+                    return "Title can't be empty"
+                if len(data['body'].strip()) > 1000:
+                    return 'Max characters for body reached'
+                return "valid"
             
-        #     validate_message = validate_data()
+            validate_message = validate_data()
 
-        #     if validate_message == 'valid' and serializer.is_valid():
-        #         data = serializer.save(
-        #             creator=request.user,
-        #             title=data['title'],
-        #             body=data['body'],
-        #             participants = []
-        #         )
-        #         print(Fore.GREEN, "=========", "POST: Room Sucess", "=========", Style.RESET_ALL)
+            if validate_message == 'valid' and serializer.is_valid(raise_exception=True):
+                serializer.save(
+                    creator=request.user,
+                    title=data['title'],
+                    body=data['body'],
+                    participants = []
+                )
+                
+                print(Fore.GREEN, "=========", "POST: Room Successful", "=========", Style.RESET_ALL)
+                return Response({'message': 'successful'}, status=status.HTTP_200_OK)
+            
+            print(Fore.GREEN, "=========", "POST: Room Unsuccessful", "=========\n", "Problem:", validate_message, Style.RESET_ALL)
+            return Response({'message': validate_message}, status=status.HTTP_200_OK)
+        
 
-        #         return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
-        #     print(Fore.GREEN, "=========", "POST: Room Unsucessful", "=========", Style.RESET_ALL)
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        # except Exception as e:
-        #     print(Fore.RED, "=========", "ERRORS: ", e, "=========", Style.RESET_ALL)
-        #     return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            print(Fore.YELLOW, "=========", "ERRORS", "=========\n",e, Style.RESET_ALL)
+            return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         
 
         
 
-def check_object_permissions(request, object):
+def check_permission(request, object):
     if request.method in ['PUT', 'PATCH', 'DELETE']:
         if object.creator != request.user:
             return False
@@ -127,39 +128,52 @@ class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
-        room = get_object_or_404(Room, id=self.kwargs['id'])
-        print(Fore.GREEN, "=========", "GET: Single Room Success", "=========", Style.RESET_ALL)
-        return room
+        try:
+            room = get_object_or_404(Room, id=self.kwargs['id'])
+            print(Fore.GREEN, "=========", "GET: Single Room Successful", "=========", Style.RESET_ALL)
+            return room
+        except Exception as e:
+            print(Fore.YELLOW, "=========", "ERRORS", "=========\n",e, Style.RESET_ALL)
+            return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-    
     def destroy(self, request, id):
         try:
             
             room = self.get_object()
-            print("========", room)
 
-            permission_allowed = check_object_permissions(request, room)
+            permission_allowed = check_permission(request, room)
 
-            if permission_allowed:
-                self.perform_destroy(room)
-                print(Fore.GREEN, "=========", "DELETE: Single Room Sucess", "=========", Style.RESET_ALL)
-                return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
-            print(Fore.GREEN, "=========", "DELETE: Single Room Unsucessful", "=========", Style.RESET_ALL)
-            return Response({'message': "permission not allowed"},status=status.HTTP_200_OK)
+            if not permission_allowed:
+                print(Fore.GREEN, "=========", "DELETE: Single Room Unsuccessful", "=========\n", "Problem:", "permission not allowed", Style.RESET_ALL)
+                return Response({'message': 'permission not allowed'}, status=status.HTTP_200_OK)
 
+            self.perform_destroy(room)
+            print(Fore.GREEN, "=========", "DELETE: Single Room Successful", "=========", Style.RESET_ALL)
+            return Response({'message': 'successful'}, status=status.HTTP_200_OK)
+            
         except Exception as e:
-            print(Fore.RED, "ERRORS: ", e, Style.RESET_ALL)
+            print(Fore.YELLOW, "=========", "ERRORS", "=========\n",e, Style.RESET_ALL)
             return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         
-    def update(self, request, id, partial):
+    def update(self, request, partial, id):
         try:
 
+            data = request.data
+            room = self.get_object()
+            permission_allowed = check_permission(request, room)
+            
+
+            if not permission_allowed:
+                print(Fore.GREEN, "=========", "PATCH: Single Room Unsuccessful", "=========\n", "Problem:", "permission not allowed", Style.RESET_ALL)
+                return Response({'message': 'permission not allowed'}, status=status.HTTP_200_OK)
+
+
             def validate_data():
-                if request.data['title'].strip() == '':
+                if data['title'].strip() == '':
                     return "Title can't be empty or only spaces"
-                if len(request.data['body'].strip()) > 1000:
+                if len(data['body'].strip()) > 1000:
                     return 'Max characters for body reached'
                 return "valid"
             
@@ -168,17 +182,18 @@ class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
 
             if validate_message == 'valid':
 
-                room = self.get_object()
-                serializer = self.get_serializer(room, data=request.data, partial=True)
+                serializer = self.get_serializer(room, data=data, partial=True)
                 serializer.is_valid(raise_exception=True)
-                serializer.save()
-                return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
-            return Response({'message': validate_message},status=status.HTTP_200_OK)
-            
+                data2 = serializer.save()
 
+                print(Fore.GREEN, "=========", "PATCH: Single Room Successful", "=========", Style.RESET_ALL)
+                return Response({'message': 'successful'}, status=status.HTTP_200_OK)
+            
+            print(Fore.GREEN, "=========", "PATCH: Single Room Unsuccessful", "=========\n", "Problem:", validate_message, Style.RESET_ALL)
+            return Response({'message': validate_message}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            print(Fore.RED, "ERRORS: ", e, Style.RESET_ALL)
+            print(Fore.YELLOW, "=========", "ERRORS", "=========\n",e, Style.RESET_ALL)
             return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

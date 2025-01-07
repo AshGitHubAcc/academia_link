@@ -23,15 +23,16 @@ export default function CreateDock() {
 
         try {
             const response = await api.post('/api/rooms/', dockInfo);
-            console.log(response.status)
-
-            if (response.status === 200) {
-                console.log("Server response is valid:", response.data);
+            
+            if (response.data.message === "successful") {
+                console.log("Server response: request valid\n", response.data);
             } else {
-                console.log("Server response is invalid:", response);
+                console.log("Server response: request invalid\n", response.data);
             }
+            
         } catch (error) {
-            console.error("===========API request error:===========\n", error)
+            console.error("=========== API request error ===========\n", error.message)
+            // server error
         }
     }
 

@@ -30,14 +30,21 @@ export default function Home() {
 
 
     async function handleDockDelete(dockId) {
+
         try {
 
             const response = await api.delete(`/api/rooms/${dockId}/`)
-            console.log("Sucessful", response)
-            setRoomDeleted(!roomDeleted)
-
+            
+            if (response.data.message === "successful") {
+                console.log("Server response: request valid\n", response.data);
+                setRoomDeleted(!roomDeleted)
+            } else {
+                console.log("Server response: request invalid\n", response.data);
+            }
+            
         } catch (error) {
-            console.log("Error: ", error)
+            console.error("=========== API request error ===========\n", error.message)
+            // server error
         }
     }
 
