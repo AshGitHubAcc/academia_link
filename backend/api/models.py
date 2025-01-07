@@ -15,8 +15,6 @@ class CustomUser(AbstractUser):
         return str(self.username)
 
 
-# Call users pirates 
-# Call Room a Dock
 class Room(models.Model):
     id = models.AutoField(primary_key=True)
     creator = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE, related_name="rooms")

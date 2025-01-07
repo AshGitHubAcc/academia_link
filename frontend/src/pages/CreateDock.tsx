@@ -6,6 +6,7 @@ export default function CreateDock() {
     const [dockInfo, setDockInfo] = useState({
         title: '',
         body: '',
+        creatorasd: 'Someone',
     })
 
     const [error, setError] = useState(false)
@@ -20,16 +21,17 @@ export default function CreateDock() {
         }
         setError(false)
 
-
-
         try {
+            const response = await api.post('/api/rooms/', dockInfo);
+            console.log(response.status)
 
-            const response = await api.post('/api/rooms/', dockInfo)
-            console.log("Scuessful", response)
-
-            
+            if (response.status === 200) {
+                console.log("Server response is valid:", response.data);
+            } else {
+                console.log("Server response is invalid:", response);
+            }
         } catch (error) {
-            console.log('erorr: ', error)
+            console.error("===========API request error:===========\n", error)
         }
     }
 

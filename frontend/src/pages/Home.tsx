@@ -10,6 +10,7 @@ export default function Home() {
 
     const navigate = useNavigate()
     const [docks, setDocks] = useState([])
+    const [roomDeleted, setRoomDeleted] = useState(false)
 
 
     async function getAllDocks() {
@@ -25,13 +26,15 @@ export default function Home() {
 
     useEffect(()=>{
         getAllDocks()
-    },[])
+    },[roomDeleted])
 
 
     async function handleDockDelete(dockId) {
         try {
+
             const response = await api.delete(`/api/rooms/${dockId}/`)
             console.log("Sucessful", response)
+            setRoomDeleted(!roomDeleted)
 
         } catch (error) {
             console.log("Error: ", error)
@@ -53,7 +56,7 @@ export default function Home() {
                     <div key={dock.id}  className="bg-gray-500 p-3 hover:cursor-pointer flex ">
                         <div onClick={()=>navigate(`/home/dock/${dock.id}`)} className="flex-[8]" >
                             {dock.title} 
-                            <small> Creator: {dock.creator.username}</small>
+                            <small> Creator: {dock.creator?.username}</small>
                             <div>{dock.body}</div>
                         </div>
                         <div className="flex-1">

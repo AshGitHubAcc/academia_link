@@ -119,6 +119,7 @@ export default function Dock() {
     const [sendingMessage, setSendingMessage] = useState('')
 
     const [messageSent, setMessageSent] = useState(0)
+    console.log("HERE==============")
 
 
     async function fetchData() {
@@ -137,6 +138,8 @@ export default function Dock() {
 
     useEffect(()=>{
         fetchData()
+        // console.log(messages)
+
     }, [messageSent])
 
 
@@ -178,12 +181,12 @@ export default function Dock() {
                             <div className='flex flex-col gap-2'>
                                 
                                 <div className='underline'>
-                                    {ele.creator.username} --- {format(new Date(ele.created_at), 'hh:mm a, MM/dd/yyyy')}
-                                
+                                    {ele.creator?.username} --- {format(new Date(ele?.created_at), 'hh:mm a, MM/dd/yyyy')}
+
                                 </div>
 
                                 <div>
-                                    {ele.body}
+                                    {ele?.body}
                                 </div>
 
                                 

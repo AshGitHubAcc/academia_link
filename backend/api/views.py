@@ -1,7 +1,6 @@
 from colorama import init, Fore, Style
 init()
 from rest_framework import generics, status
-from django.core.exceptions import PermissionDenied
 
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.permissions import AllowAny
@@ -20,7 +19,6 @@ with open(file_path, 'r') as file:
     STATES_UNIVERSITIES = json.load(file)
 
 
-# Create your views here.
 
 
 class CreateUser(generics.CreateAPIView):
@@ -64,73 +62,129 @@ class CreateUser(generics.CreateAPIView):
         return Response({'message': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class RoomListCreateView(generics.ListCreateAPIView):
     serializer_class = RoomSerializer
-    # Allows all to get all rooms but only authericanted users can make a room
-    permission_classes = [IsAuthenticatedOrReadOnly] 
+    # allows everyone to get all data but only authenticated users can patch, post, delete
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
-            return Room.objects.all().order_by('-created_at')
-    
-    def perform_create(self, serializer):
-        def validate_data():
-            if self.request.data['title'] == '':
-                return "Title can't be empty"
-            if len(self.request.data['body']) > 1000:
-                return 'Max characters for body reached'
-            return "valid"
+        try:
+            all_rooms = Room.objects.all().order_by('-created_at')
+            return all_rooms
+        except Exception as e:
+            print(Fore.RED, "=========", "ERRORS", "=========\n", e, Style.RESET_ALL)
+            return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def create(self, serializer):
+        print("==========")
+        return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
+
+        # try:
+
+        #     request = self.request
+        #     data = self.request.data
+
+        #     def validate_data():
+        #         if data['title'].strip() == '':
+        #             return "Title can't be empty or only spaces"
+        #         if len(data['body'].strip()) > 1000:
+        #             return 'Max characters for body reached'
+        #         return "valid"
+            
+        #     validate_message = validate_data()
+
+        #     if validate_message == 'valid' and serializer.is_valid():
+        #         data = serializer.save(
+        #             creator=request.user,
+        #             title=data['title'],
+        #             body=data['body'],
+        #             participants = []
+        #         )
+        #         print(Fore.GREEN, "=========", "POST: Room Sucess", "=========", Style.RESET_ALL)
+
+        #         return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
+        #     print(Fore.GREEN, "=========", "POST: Room Unsucessful", "=========", Style.RESET_ALL)
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # except Exception as e:
+        #     print(Fore.RED, "=========", "ERRORS: ", e, "=========", Style.RESET_ALL)
+        #     return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         
-        validate_message = validate_data()
 
-        if validate_message == 'valid':
-            serializer.save(creator=self.request.user)
-            return Response({'message': "sucessful"}, status=status.HTTP_200_OK)
-        return Response({'message': validate_message}, status=status.HTTP_400_BAD_REQUEST)
+        
 
+def check_object_permissions(request, object):
+    if request.method in ['PUT', 'PATCH', 'DELETE']:
+        if object.creator != request.user:
+            return False
+    return True
 
 class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RoomSerializer
     permission_classes = [IsAuthenticated]
- 
+
     def get_object(self):
-        room = get_object_or_404(Room, id=self.kwargs["id"])
-        self.check_object_permissions(self.request, room)
-
-        return room 
-    
-    def check_object_permissions(self, request, obj):
-        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-            if obj.creator != request.user:
-                raise PermissionDenied("You do not have permission to modify this room.")
-        return super().check_object_permissions(request, obj)
-    
-    def update(self, request, id):
-        room = self.get_object()
-        self.check_object_permissions(self.request, room)
-
-        room['title'] = request.data['title']
-        room['body'] = request.data['body']
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+        room = get_object_or_404(Room, id=self.kwargs['id'])
+        print(Fore.GREEN, "=========", "GET: Single Room Success", "=========", Style.RESET_ALL)
+        return room
 
 
     
     def destroy(self, request, id):
+        try:
+            
+            room = self.get_object()
+            print("========", room)
 
-        room = self.get_object()
-        self.check_object_permissions(self.request, room)
+            permission_allowed = check_object_permissions(request, room)
 
-        self.perform_destroy(room)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            if permission_allowed:
+                self.perform_destroy(room)
+                print(Fore.GREEN, "=========", "DELETE: Single Room Sucess", "=========", Style.RESET_ALL)
+                return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
+            print(Fore.GREEN, "=========", "DELETE: Single Room Unsucessful", "=========", Style.RESET_ALL)
+            return Response({'message': "permission not allowed"},status=status.HTTP_200_OK)
 
+        except Exception as e:
+            print(Fore.RED, "ERRORS: ", e, Style.RESET_ALL)
+            return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    def update(self, request, id, partial):
         
-        room = self.get_object()
-        serializer = self.get_serializer(room, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response({'message   ': "Sucessful"})
+    def update(self, request, id, partial):
+        try:
+
+            def validate_data():
+                if request.data['title'].strip() == '':
+                    return "Title can't be empty or only spaces"
+                if len(request.data['body'].strip()) > 1000:
+                    return 'Max characters for body reached'
+                return "valid"
+            
+            validate_message = validate_data()
+
+
+            if validate_message == 'valid':
+
+                room = self.get_object()
+                serializer = self.get_serializer(room, data=request.data, partial=True)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response({'message': 'sucessful'}, status=status.HTTP_200_OK)
+            return Response({'message': validate_message},status=status.HTTP_200_OK)
+            
+
+
+        except Exception as e:
+            print(Fore.RED, "ERRORS: ", e, Style.RESET_ALL)
+            return Response({'message': e},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
 
 class MessageListCreateView(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
@@ -141,26 +195,27 @@ class MessageListCreateView(generics.ListCreateAPIView):
         return [] # any logged in user will be able to get all the messages so I returend an empty array
 
     
-    def perform_create(self, serializer):
+    # def perform_create(self, serializer):
 
-        def validate_data():
-            if self.request.data['body'] == '':
-                return "Message body can't be empty"
-            if not self.request.data['room']:
-                return "Room ID is required"
-            return "valid"
+    #     def validate_data():
+    #         if self.request.data['body'] == '':
+    #             return "Message body can't be empty"
+    #         if not self.request.data['room']:
+    #             return "Room ID is required"
+    #         return "valid"
         
-        validate_message = validate_data()
+    #     validate_message = validate_data()
 
-        if validate_message == 'valid':
+    #     if validate_message == 'valid':
 
-            # data['room'] is room id
-            room = get_object_or_404(Room, id=self.request.data['room'])
+    #         # data['room'] is room id
+    #         room = get_object_or_404(Room, id=self.request.data['room'])
 
-            serializer.save(
-                creator=self.request.user,
-                room=room,
-                body=self.request.data['body']
-            )
-            return Response({'message': "successful"}, status=status.HTTP_201_CREATED)
-        return Response({'message': validate_message}, status=status.HTTP_400_BAD_REQUEST)
+    #         serializer.save(
+    #             creator=self.request.user,
+    #             room=room,
+    #             body=self.request.data['body']
+    #         )
+    #         return Response({'message': "successful"}, status=status.HTTP_201_CREATED)
+    #     return Response({'message': validate_message}, status=status.HTTP_400_BAD_REQUEST)
+    
