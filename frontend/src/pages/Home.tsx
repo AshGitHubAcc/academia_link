@@ -12,6 +12,10 @@ export default function Home() {
     const [docks, setDocks] = useState([])
     const [roomDeleted, setRoomDeleted] = useState(false)
     const [topics, setTopics] = useState([])
+    const [searchValue, setSearchValue] = useState('')
+    const [submitSearchQuery, setSubmitSearchQuery] = useState(false)
+
+
 
 
     async function getAllDocks() {
@@ -58,7 +62,7 @@ export default function Home() {
 
     useEffect(() => {
         getAllDocks()
-    }, [roomDeleted, searchParams])
+    }, [roomDeleted, searchParams, submitSearchQuery])
     
 
 
@@ -81,24 +85,11 @@ export default function Home() {
         }
     }
 
-
-    // async function fetchFilteredRooms(topicName) {
-
-    //     try {
-    //         const response = await api.delete(`/api/rooms/${topicName}/`)
-            
-    //         if (response.data.message === "successful") {
-    //             console.log("Server response: request valid\n", response.data);
-    //             setRoomDeleted(!roomDeleted)
-    //         } else {
-    //             console.log("Server response: request invalid\n", response.data);
-    //         }
-            
-    //     } catch (error) {
-    //         console.error("=========== API request error ===========\n", error.message)
-    //         // server error
-    //     }
-    // }
+    function handleSearch(e) {
+        e.preventDefault()
+        navigate(`/home/?query=${searchValue}`)
+        setSubmitSearchQuery(!submitSearchQuery)
+    }
 
 
 
@@ -112,15 +103,19 @@ export default function Home() {
             <div className="flex bg-gray-600 h-full">
 
                 <div className="flex-1 w-[29%] h-[80%] bg-gray-500 p-5">
+
+                    <form onSubmit={(e)=>handleSearch(e)}>
+                        <input type="text" value={searchValue} onChange={(e)=>setSearchValue(e.target.value)} />
+                        <button type="submit">Submit</button>
+                    </form>
                     
-                    <input type="text" />
 
                     <Link to={`/home`}>
                         <button className="mb-5 bg-gray-400 w-[60%] p-2">All</button>
                     </Link>
 
                     {topics.map((ele,index)=>(
-                        <Link to={`/home/?query=${encodeURIComponent(ele.name)}`} key={index}>
+                        <Link to={`/home/?query=${encodeURIComponent(ele.name)}`} key={index} >
                             <button className="mb-5 bg-gray-400 w-[60%] p-2">{ele.name}</button>
                         </Link>
                     ))}

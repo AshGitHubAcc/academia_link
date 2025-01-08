@@ -83,6 +83,8 @@ class RoomViewSet(generics.ListCreateAPIView):
 
         queryset = Room.objects.all()
         query_string = self.request.query_params.get('topic', None)
+
+        print("=========", query_string)
         
         if query_string:
             filtered = queryset.filter(topic__name=query_string)
