@@ -126,19 +126,33 @@ export default function Dock() {
     async function fetchData() {
         try {
 
-            
-            const response = await api.get(`/api/rooms/${116}/messages/`)
-
-            // const response = await api.get(`/api/rooms/${parseInt(id)}/`)
+            const response = await api.get(`/api/rooms/${parseInt(id)}/`)
             
             setDock(response.data)
-            setMessages(response.data.messages)
-            console.log("============", response.data)
             
         } catch (error) {
             console.log(error)
         }
     }
+    async function fetchAllMessages() {
+        try {
+
+            const response = await api.get(`/api/rooms/${parseInt(id)}/messages/`)
+            setMessages(response.data.results)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(()=>{
+        fetchAllMessages()
+    },[])
+
+    useEffect(()=>{
+        console.log(messages)
+    },[messages])
+
 
 
     useEffect(()=>{
@@ -152,9 +166,8 @@ export default function Dock() {
         e.preventDefault()
 
         try {
-            const response = await api.post(`/api/messages/`, {
+            const response = await api.post(`/api/rooms/${id}/messages/`, {
                 'body': sendingMessage,
-                'room': dock.id,     
             })
             
             if (response.data.message === "successful") {
@@ -171,11 +184,11 @@ export default function Dock() {
         }
     }
 
-    async function handleMessageDelete(e,id) {
+    async function handleMessageDelete(e,message_id) {
         e.preventDefault()
 
         try {
-            const response = await api.delete(`/api/messages/${id}`)
+            const response = await api.delete(`/api/rooms/${id}/messages/${message_id}/`)
             
             if (response.data.message === "successful") {
                 console.log("Server response: request valid\n", response.data);
@@ -207,6 +220,30 @@ export default function Dock() {
 
             <div className="bg-gray-600 h-full flex-[3] flex flex-col">
                 <div className="flex-[10]">
+
+                {messages?.map((ele, index)=> (
+                    <div className="flex border p-5 gap-10" key={index}>
+                        <div>
+                            <img src={image} alt="" />
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            
+                            <div className='underline'>
+                                {ele?.sender?.username} --- {format(new Date(ele?.created_at), 'hh:mm a, MM/dd/yyyy')}
+
+                            </div>
+                            
+                            <div>{ele?.body}</div>
+                            {/* <TextareaAutosize className='w-full h-auto' value={editMessage} onChange={  (e)=>setEditMessage(e.target.value)}/> */}
+
+                            <div>
+                                <button >Edit</button>
+                                <button onClick={(e)=>handleMessageDelete(e, ele?.id)}>Delete</button>
+                            </div>
+
+                        </div>
+                    </div>
+                ))}
                     
 
 
@@ -228,26 +265,3 @@ export default function Dock() {
     )
 }
 
-// {messages.map((ele, index)=> (
-//     <div className="flex border p-5 gap-10" key={index}>
-//         <div>
-//             <img src={image} alt="" />
-//         </div>
-//         <div className='flex flex-col gap-2'>
-            
-//             <div className='underline'>
-//                 {ele.creator?.username} --- {format(new Date(ele?.created_at), 'hh:mm a, MM/dd/yyyy')}
-
-//             </div>
-            
-//             <div className={`${ele.body === '[Message has been deleted]' ? 'bg-red-500 text-white' : ''} p-2`} >{ele.body}</div>
-//             {/* <TextareaAutosize className='w-full h-auto' value={editMessage} onChange={(e)=>setEditMessage(e.target.value)}/> */}
-
-//             <div>
-//                 <button >Edit</button>
-//                 <button onClick={(e)=>handleMessageDelete(e, ele.id)}>Delete</button>
-//             </div>
-
-//         </div>
-//     </div>
-// ))}

@@ -1,55 +1,66 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 
 class CustomUser(AbstractUser):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=20, default='')
-    state = models.CharField(max_length=30, default='')
-    university = models.CharField(max_length=100, default='')
+    name = models.CharField(max_length=50, null=False)
+    state = models.CharField(max_length=30, null=False)
+    university = models.CharField(max_length=100, null=False)
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-created_at']
+    
     def __str__(self):
-        return str(self.username)
+        return f"{self.name} ({self.username})"
+
+    def clean(self):
+        if not self.username.endswith('.edu'):
+            raise ValidationError('Email must end with .edu domain')
 
 
 class Topic(models.Model):
-    name = models.CharField(max_length=25)
-    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    name = models.CharField(max_length=50, unique=True, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
-        return str(self.name)
-
-
-
+        return self.name
+    
 
 class Room(models.Model):
-    id = models.AutoField(primary_key=True)
-    creator = models.ForeignKey(CustomUser, null=False,blank=False, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
-    body = models.CharField(null=True, max_length=1000, blank=True)
-    participants = models.ManyToManyField(CustomUser, related_name='participants', blank=True)
-    topic = models.ForeignKey(Topic, null=True,blank=True, on_delete=models.DO_NOTHING)
-    # images = []
-    # videos = []
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='created_rooms', null=False, blank=False)
+    title = models.CharField(max_length=100, null=False, blank=False)
+    body = models.TextField(max_length=1000, null=True, blank=True)
+    participants = models.ManyToManyField(CustomUser, null=True, blank=True, related_name='joined_rooms')
+
+    topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True, blank=True, related_name='rooms')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
-        return str(self.creator) + " ~ " + str(self.title)
-    
+        return f"{self.title} by {self.creator.name}"
 
 class Message(models.Model):
-    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=False, related_name='created_messages')
-    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='received_messages')
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False, blank=False)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages', null=True)
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='messages')
     body = models.TextField()
+    is_deleted = models.BooleanField(default=False)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
-        return "Message: " + str(self.body[:20])
-    
+        return f"{self.sender.name} - Message: {self.body[:20]}..."

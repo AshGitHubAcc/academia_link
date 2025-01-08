@@ -51,12 +51,12 @@ export default function Register() {
   };
 
   const handleChange = (e) => {
+    console.log(formData, "========")
+
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value,
-      ...(name === 'state' ? { university: '', universitySuggestions: [] } : {})
-    }));
+      [name]: value}));
 
     if (name === 'state') {
       const matchedStates = value ? Object.keys(STATES_UNIVERSITIES).filter(state => state.toLowerCase().includes(value.toLowerCase())) : [];
@@ -73,23 +73,19 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
+    // const newErrors = validateForm();
 
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        const response = await api.post('/api/register/', formData)
-        console.log('Registration Successful', response.data);
-        navigate('/login')
-      } catch (error) {
-        if (error.response) {
-          const errorMessage = error.response.data.message || 'Registration failed';
-          console.log("Error: ", errorMessage);
-        } else {
-          console.log("Network error:", error);
-        }
+    try {
+      const response = await api.post('/api/auth/register/', formData)
+      console.log('Registration Successful', response.data);
+      // navigate('/login')
+    } catch (error) {
+      if (error.response) {
+        const errorMessage = error.response.data.message || 'Registration failed';
+        console.log("Error: ", errorMessage);
+      } else {
+        console.log("Network error:", error);
       }
-    } else {
-      setErrors(newErrors);
     }
   };
 

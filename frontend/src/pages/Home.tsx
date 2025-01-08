@@ -3,8 +3,7 @@ import { Link } from "react-router-dom"
 import api from "../api"
 import { useNavigate } from "react-router-dom"
 
-
-
+import { Navigate } from "react-router-dom"
 
 export default function Home() {
 
@@ -17,8 +16,8 @@ export default function Home() {
     async function getAllDocks() {
         try {
             const response = await api.get('/api/rooms/')
-            setDocks(response.data)
             console.log(response.data)
+            setDocks(response.data.results)
             
         } catch (error) {
             console.log("ERROR: ", error)
@@ -29,9 +28,9 @@ export default function Home() {
         try {
 
             const response = await api.get(`/api/topics/`)
-            
-            setTopics(response.data)
             console.log("Server response: request valid\n", response.data);
+            
+            setTopics(response.data.results)
                 
             
         } catch (error) {
@@ -81,19 +80,28 @@ export default function Home() {
         <div className="h-[85%]">
             <h1>HOME</h1>
 
+
             <Link to='/home/create-dock' className="text-[30px] border">Dock +</Link>
 
             <div className="flex bg-gray-600 h-full">
 
                 <div className="flex-1 w-[29%] h-[80%] bg-gray-500 p-5">
+                    
+                    <Link to={`/home/query=all`}>
+                        <button className="mb-5 bg-gray-400 w-[60%] p-2">All</button>
+                    </Link>
+
                     {topics.map((ele,index)=>(
-                        <div key={index} className="mb-5 bg-gray-400 w-[60%] p-2">{ele.name}</div>
+                        <Link to={`/home/query=${ele.name}`}>
+                            <button key={index} className="mb-5 bg-gray-400 w-[60%] p-2">{ele.name}</button>
+                        </Link>
                     ))}
                 </div>
 
                 <div className="flex flex-col gap-5 p-2 mx-20 flex-[5]">
                 {docks.map((dock) => (
                     <div key={dock.id}  className="bg-gray-500 p-3 hover:cursor-pointer flex ">
+                        
                         <div onClick={()=>navigate(`/home/dock/${dock.id}`)} className="flex-[8]" >
                             {dock.title} 
                             <small> Creator: {dock.creator?.username}</small>

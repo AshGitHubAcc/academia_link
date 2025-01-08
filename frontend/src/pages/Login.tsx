@@ -15,10 +15,10 @@ export default function Login() {
         e.preventDefault()
         
         try {
-            const response = await api.post('/api/token/', {'username': email, 'password': password})
+            const response = await api.post('/api/auth/login/', {'username': email, 'password': password})
+            console.log('Registration Successful', response.data);
             localStorage.setItem(ACCESS_TOKEN, response.data.access)
             localStorage.setItem(REFRESH_TOKEN, response.data.refresh)
-            console.log('Registration Successful', response.data);
             navigate('/home')
 
 
