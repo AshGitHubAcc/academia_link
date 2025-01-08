@@ -82,15 +82,22 @@ class RoomViewSet(generics.ListCreateAPIView):
     def get_queryset(self):
 
         queryset = Room.objects.all()
-        topic = self.request.query_params.get('topic', None)
-        if topic:
-            queryset = queryset.filter(topic__name=topic)
+        query_string = self.request.query_params.get('topic', None)
+        
+        if query_string:
+            filtered = queryset.filter(topic__name=query_string)
+            if len(filtered) != 0:
+                queryset = filtered
+            else:
+                queryset = queryset.filter(title__contains=query_string)
+
         return queryset
 
     def perform_create(self, serializer):
         
         topic_id = self.request.data.get('topic')
         serializer.save(creator=self.request.user, topic=Topic.objects.get(id=topic_id))
+
 
 
 class RoomDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -130,3 +137,4 @@ class TopicListCreateView(generics.ListCreateAPIView):
     
     # def perform_create(self, serializer):
     #     serializer.save()
+

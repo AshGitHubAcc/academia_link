@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import api from "../api"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 
 import { Navigate } from "react-router-dom"
 
 export default function Home() {
 
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
     const [docks, setDocks] = useState([])
     const [roomDeleted, setRoomDeleted] = useState(false)
     const [topics, setTopics] = useState([])
@@ -15,7 +16,16 @@ export default function Home() {
 
     async function getAllDocks() {
         try {
-            const response = await api.get('/api/rooms/')
+            const query = searchParams.get('query')
+            
+            let url = '/api/rooms/'
+            
+            if (query !== 'all' && query) {
+                url += `?topic=${query}`
+            }
+            console.log("Final URL:", url)
+            
+            const response = await api.get(url)
             console.log(response.data)
             setDocks(response.data.results)
             
@@ -46,11 +56,10 @@ export default function Home() {
     }, [])
     
 
-    useEffect(()=>{
+    useEffect(() => {
         getAllDocks()
-
-
-    },[roomDeleted])
+    }, [roomDeleted, searchParams])
+    
 
 
     async function handleDockDelete(dockId) {
@@ -73,6 +82,23 @@ export default function Home() {
     }
 
 
+    // async function fetchFilteredRooms(topicName) {
+
+    //     try {
+    //         const response = await api.delete(`/api/rooms/${topicName}/`)
+            
+    //         if (response.data.message === "successful") {
+    //             console.log("Server response: request valid\n", response.data);
+    //             setRoomDeleted(!roomDeleted)
+    //         } else {
+    //             console.log("Server response: request invalid\n", response.data);
+    //         }
+            
+    //     } catch (error) {
+    //         console.error("=========== API request error ===========\n", error.message)
+    //         // server error
+    //     }
+    // }
 
 
 
@@ -87,13 +113,15 @@ export default function Home() {
 
                 <div className="flex-1 w-[29%] h-[80%] bg-gray-500 p-5">
                     
-                    <Link to={`/home/query=all`}>
+                    <input type="text" />
+
+                    <Link to={`/home`}>
                         <button className="mb-5 bg-gray-400 w-[60%] p-2">All</button>
                     </Link>
 
                     {topics.map((ele,index)=>(
-                        <Link to={`/home/query=${ele.name}`}>
-                            <button key={index} className="mb-5 bg-gray-400 w-[60%] p-2">{ele.name}</button>
+                        <Link to={`/home/?query=${encodeURIComponent(ele.name)}`} key={index}>
+                            <button className="mb-5 bg-gray-400 w-[60%] p-2">{ele.name}</button>
                         </Link>
                     ))}
                 </div>

@@ -25,7 +25,7 @@ urlpatterns = [
     
     path('rooms/', views.RoomViewSet.as_view(), name='room-list'),
     path('rooms/<int:id>/', views.RoomDetailView.as_view(), name='room-detail'),
-    
+
     path('rooms/<int:room_id>/messages/', views.MessageViewSet.as_view(), name='room-messages'),
     path('rooms/<int:room_id>/messages/<int:pk>/', views.MessageDetailView.as_view(), name='message-detail'),
 
