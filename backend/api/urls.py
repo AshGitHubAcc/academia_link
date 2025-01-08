@@ -14,7 +14,13 @@ urlpatterns = [
     path('rooms/', views.RoomListCreateView.as_view(), name='rooms-list-create'),
     path('rooms/<int:id>/', views.RoomDetailView.as_view(), name='rooms-detail'),
 
-    path('messages/', views.MessageListCreateView.as_view(), name='messages-list-create'),
+    path('rooms/<int:id>/messages/', views.MessageListCreateView.as_view()),
+
+    
+    # path('messages/', views.MessageListCreateView.as_view(), name='messages-list-create'),
+    # path('messages/<int:id>', views.MessageDetailView.as_view(), name='messages-list-create'),
+
+    path('topics/', views.TopicListCreateView.as_view(), name='messages-list-create'),
     # path('rooms/<int:id>/', views.RoomDetailView.as_view(), name='room-detail'),
 
 ]   

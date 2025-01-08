@@ -15,12 +15,23 @@ class CustomUser(AbstractUser):
         return str(self.username)
 
 
+class Topic(models.Model):
+    name = models.CharField(max_length=25)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def __str__(self):
+        return str(self.name)
+
+
+
+
 class Room(models.Model):
     id = models.AutoField(primary_key=True)
-    creator = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE, related_name="rooms")
+    creator = models.ForeignKey(CustomUser, null=False,blank=False, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     body = models.CharField(null=True, max_length=1000, blank=True)
     participants = models.ManyToManyField(CustomUser, related_name='participants', blank=True)
+    topic = models.ForeignKey(Topic, null=True,blank=True, on_delete=models.DO_NOTHING)
     # images = []
     # videos = []
 
@@ -34,17 +45,11 @@ class Room(models.Model):
 class Message(models.Model):
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=False, related_name='created_messages')
     receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='received_messages')
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=False)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=False, blank=False)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.body[:20])
+        return "Message: " + str(self.body[:20])
     
-
-class Topic(models.Model):
-    name = models.CharField(max_length=25)
-
-    def __str__(self):
-        return str(self.name)

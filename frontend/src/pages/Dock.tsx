@@ -109,7 +109,7 @@ import image from '../../public/vite.svg'
 import { useParams } from 'react-router'
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-
+import TextareaAutosize from 'react-textarea-autosize'
 
 
 export default function Dock() {
@@ -118,17 +118,22 @@ export default function Dock() {
     const [messages, setMessages] = useState([])
     const [sendingMessage, setSendingMessage] = useState('')
 
+
     const [messageSent, setMessageSent] = useState(0)
-    console.log("HERE==============")
+
 
 
     async function fetchData() {
         try {
-            const response = await api.get(`/api/rooms/${parseInt(id)}/`)
 
+            
+            const response = await api.get(`/api/rooms/${116}/messages/`)
+
+            // const response = await api.get(`/api/rooms/${parseInt(id)}/`)
+            
             setDock(response.data)
             setMessages(response.data.messages)
-            console.log(response.data)
+            console.log("============", response.data)
             
         } catch (error) {
             console.log(error)
@@ -151,11 +156,40 @@ export default function Dock() {
                 'body': sendingMessage,
                 'room': dock.id,     
             })
-            console.log(response)
-            setMessageSent(messageSent+1)
+            
+            if (response.data.message === "successful") {
+                console.log("Server response: request valid\n", response.data);
+                setMessageSent(messageSent+1)
+
+            } else {
+                console.log("Server response: request invalid\n", response.data);
+            }
+            
         } catch (error) {
-            console.log("Error: ", error)
+            console.error("=========== API request error ===========\n", error.message)
+            // server error
         }
+    }
+
+    async function handleMessageDelete(e,id) {
+        e.preventDefault()
+
+        try {
+            const response = await api.delete(`/api/messages/${id}`)
+            
+            if (response.data.message === "successful") {
+                console.log("Server response: request valid\n", response.data);
+                setMessageSent(messageSent+1)
+
+            } else {
+                console.log("Server response: request invalid\n", response.data);
+            }
+            
+        } catch (error) {
+            console.error("=========== API request error ===========\n", error.message)
+            // server error
+        }
+
     }
 
     const messages123 = [
@@ -173,28 +207,9 @@ export default function Dock() {
 
             <div className="bg-gray-600 h-full flex-[3] flex flex-col">
                 <div className="flex-[10]">
-                {messages.map((ele, index)=> (
-                        <div className="flex border p-5 gap-10" key={index}>
-                            <div>
-                                <img src={image} alt="" />
-                            </div>
-                            <div className='flex flex-col gap-2'>
-                                
-                                <div className='underline'>
-                                    {ele.creator?.username} --- {format(new Date(ele?.created_at), 'hh:mm a, MM/dd/yyyy')}
+                    
 
-                                </div>
 
-                                <div>
-                                    {ele?.body}
-                                </div>
-
-                                
-                                
-                                
-                            </div>
-                        </div>
-                    ))}
                 </div>
 
 
@@ -212,3 +227,27 @@ export default function Dock() {
         </div>
     )
 }
+
+// {messages.map((ele, index)=> (
+//     <div className="flex border p-5 gap-10" key={index}>
+//         <div>
+//             <img src={image} alt="" />
+//         </div>
+//         <div className='flex flex-col gap-2'>
+            
+//             <div className='underline'>
+//                 {ele.creator?.username} --- {format(new Date(ele?.created_at), 'hh:mm a, MM/dd/yyyy')}
+
+//             </div>
+            
+//             <div className={`${ele.body === '[Message has been deleted]' ? 'bg-red-500 text-white' : ''} p-2`} >{ele.body}</div>
+//             {/* <TextareaAutosize className='w-full h-auto' value={editMessage} onChange={(e)=>setEditMessage(e.target.value)}/> */}
+
+//             <div>
+//                 <button >Edit</button>
+//                 <button onClick={(e)=>handleMessageDelete(e, ele.id)}>Delete</button>
+//             </div>
+
+//         </div>
+//     </div>
+// ))}

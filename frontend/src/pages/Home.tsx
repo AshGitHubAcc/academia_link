@@ -11,6 +11,7 @@ export default function Home() {
     const navigate = useNavigate()
     const [docks, setDocks] = useState([])
     const [roomDeleted, setRoomDeleted] = useState(false)
+    const [topics, setTopics] = useState([])
 
 
     async function getAllDocks() {
@@ -24,8 +25,32 @@ export default function Home() {
         }
     }
 
+    async function getAllTopics() {
+        try {
+
+            const response = await api.get(`/api/topics/`)
+            
+            setTopics(response.data)
+            console.log("Server response: request valid\n", response.data);
+                
+            
+        } catch (error) {
+            console.error("=========== API request error ===========\n", error.message)
+            // server error
+        }
+
+        
+    }
+
+    useEffect(()=>{
+        getAllTopics()
+    }, [])
+    
+
     useEffect(()=>{
         getAllDocks()
+
+
     },[roomDeleted])
 
 
@@ -53,12 +78,20 @@ export default function Home() {
 
 
     return (
-        <div>
+        <div className="h-[85%]">
             <h1>HOME</h1>
 
             <Link to='/home/create-dock' className="text-[30px] border">Dock +</Link>
 
-            <div className="flex flex-col gap-5 p-2 mx-20">
+            <div className="flex bg-gray-600 h-full">
+
+                <div className="flex-1 w-[29%] h-[80%] bg-gray-500 p-5">
+                    {topics.map((ele,index)=>(
+                        <div key={index} className="mb-5 bg-gray-400 w-[60%] p-2">{ele.name}</div>
+                    ))}
+                </div>
+
+                <div className="flex flex-col gap-5 p-2 mx-20 flex-[5]">
                 {docks.map((dock) => (
                     <div key={dock.id}  className="bg-gray-500 p-3 hover:cursor-pointer flex ">
                         <div onClick={()=>navigate(`/home/dock/${dock.id}`)} className="flex-[8]" >
@@ -78,6 +111,16 @@ export default function Home() {
 
 
             </div>
+
+            <div className="flex-1">
+                asd
+            </div>
+
+
+
+            </div>
+
+           
             
 
 
