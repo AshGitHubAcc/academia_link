@@ -4,7 +4,6 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import TextField from '@mui/material/TextField';
 import test_logo from '../assets/test_logo.svg';
 import { useState, useEffect } from 'react';
 
@@ -19,7 +18,7 @@ export default function Header() {
         <div className='flex-1 flex gap-5 justify-start items-center h-full'>
 
             <div className='px-2 ml-5 mr-10 flex items-center justify-center
-                 activate-effect hover:scale-x-150 transition-transform duration-500 ease-in-out
+                 activate-effect hover:scale-x-150 transition-transform duration-500 ease-in-ou hover:cursor-pointer
             '>
                 <span className="material-symbols-outlined text-[#989494] text-3xl">menu</span>
             </div>
@@ -37,15 +36,13 @@ export default function Header() {
              focus:bg-[#838485] hover:bg-[#838485] transition-all duration-700 ease-in-out p-2  outline-none
              focus:placeholder:text-[#838485] hover:placeholder:text-[#000000] placeholder:duration-500
              placeholder:transition-colors text-gray-400 text-center hover:text-black focus:text-black
-             hover:w-full focus:w-full  
-
+             hover:w-full focus:w-full
             '  />
-
         </div>
         <div className=' flex-1 h-full flex justify-end items-center'>
-            <div className=' mr-10 flex gap-5'>
-            <button>Login</button>
-            <button>Signup</button>
+            <div className=' mr-10 flex gap-3'>
+            <button className='text-blue-500 '>Login</button>
+            <button className='  text-[#bab8b8]'>Signup</button>
             </div>
 
         </div>
