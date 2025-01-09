@@ -1,0 +1,16 @@
+.hover-effect > * {
+    transition: color 2s ease-in-out, transform 2s ease-in-out,
+}
+.hover-effect:hover > * {
+  transform: scalex(1.5);
+  color: rgb(208, 208, 208);
+  cursor: pointer;
+}
+
+.activate-effect > * {
+    transition: transform 100ms ease-in-out,
+  }
+.activate-effect:active > * {
+  transform: scale(0.9);
+}
+
