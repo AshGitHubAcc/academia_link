@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family:  Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -103,34 +103,19 @@ button:hover::after {
   transition: opacity 0.5s ease-in-out, margin 0.5s ease-in-out;
 }
 
-
-.custom-button {
-  transition: transform 0.2s ease-in, opacity 0.3s ease-in, font-weight 0.5s ease-out;
-}
-.custom-button:hover {
-  cursor: pointer;
-  font-weight:bold;
-}
-
-.custom-button:active {
-  transform: scale(0.9);
-  opacity: 60%  ;
-}
-
-.custom-button::after {
-  position: absolute;
-
-  content: '';
-  background-color: rgb(20, 103, 220);
-  height: 2px;
-  width: 0px;
-  bottom: 4px;
-  left: 15%;
-
-  transition: width 0.4s ease-in-out;
-}
-
-
 .settings-options {
   transition: background-color 0.3s ease-out, font-weight 0.5s ease-out, padding 0.5s ease-in-out, opacity 0.6s ease-in;
+}
+
+.follow-button {
+  border: none;
+  transition: transform 0.2s ease-out;
+  padding-left: 10px;
+}
+.follow-button::after {
+  all:unset
+}
+
+.follow-button:active {
+  transform: scale(0.8);
 }
