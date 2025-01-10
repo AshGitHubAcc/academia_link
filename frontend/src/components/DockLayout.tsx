@@ -11,7 +11,8 @@ export default function DockLayout({title, body}) {
 
     return (
 
-    <div className="mx-auto h-auto w-[70%] bg-[#313337] rounded-xl flex flex-col p-3 mb-5">
+    <div className="mx-auto h-auto w-full bg-[#454748] rounded-xl flex flex-col p-3 mb-5
+    hover:bg-[#525456] hover:cursor-pointer transition-all duration-300 ease-in-out">
 
 
         <div className=" h-12 flex justify-between">
@@ -27,8 +28,8 @@ export default function DockLayout({title, body}) {
             
             <button
                 className={`${
-                    isFollowed ? "bg-transparent text-[#2564ebda] !px-2" : "!px-4 text-[#9d9c9c] bg-[#1a68ee89]"
-                }  !py-1 rounded-[6px] mb-auto follow-button text-sm
+                    isFollowed ? "bg-transparent text-[#2564ebda] !px-2" : "!px-4 text-[#cccbcb] bg-[#1a68ee89]"
+                }  !py-1 rounded-[6px] mb-auto follow-button text-sm hover:bg-[#264881]
                 
                 
                 `}

@@ -132,11 +132,12 @@ class MessageDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class TopicListCreateView(generics.ListCreateAPIView):
     serializer_class = TopicSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     def get_queryset(self):
         return Topic.objects.all().order_by('-created_at')
     
-    # def perform_create(self, serializer):
-    #     serializer.save()
+    def perform_create(self, serializer):
+
+        serializer.save()
 

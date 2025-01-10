@@ -46,15 +46,21 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
+import Login from './pages/Login'
 import './css/hover.css'
 
 function App() {
   return (
     <div className="h-max-window">
 
+
       <Router>
         <Routes>
+          
+          <Route path='/login' element={<Login/>}/>
+
           <Route path='/home' element={<Home/>}/>
+
         </Routes>
       </Router>
 

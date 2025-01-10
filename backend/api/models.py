@@ -21,16 +21,32 @@ class CustomUser(AbstractUser):
         if not self.username.endswith('.edu'):
             raise ValidationError('Email must end with .edu domain')
 
+class Folder(models.Model):
+    name = models.CharField(max_length=50, null=False, blank=False)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='folders')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ['name', 'owner']
+
+    def __str__(self):
+        return f"{self.name} (owned by {self.owner.name})"
 
 class Topic(models.Model):
-    name = models.CharField(max_length=50, unique=True, null=False, blank=False)
+    name = models.CharField(max_length=50, null=False, blank=False)
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='topics', null=True) 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-created_at']
+        unique_together = ['name', 'folder']
 
     def __str__(self):
-        return self.name
+        return f"{self.name} (in {self.folder.name})"
+
+
+
     
 
 class Room(models.Model):
@@ -49,10 +65,12 @@ class Room(models.Model):
 
     def __str__(self):
         return f"{self.title} by {self.creator.name}"
+    
+
 
 class Message(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='messages', null=True)
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sender')
     body = models.TextField()
     is_deleted = models.BooleanField(default=False)
     
@@ -64,3 +82,4 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.sender.name} - Message: {self.body[:20]}..."
+    

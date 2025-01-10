@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.core.validators import EmailValidator
-from .models import CustomUser, Room, Message, Topic
+from .models import CustomUser, Room, Message, Topic, Folder
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,10 +15,18 @@ class UserSerializer(serializers.ModelSerializer):
         return CustomUser.objects.create_user(**validated_data)
 
 
+
 class TopicSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Topic
-        fields = ['id', 'name', 'created_at']
+        fields = ['id', 'name','folder', 'created_at']
+
+class FolderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Folder
+        fields = ['id', 'name', 'owner', 'created_at']
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -43,3 +51,4 @@ class RoomSerializer(serializers.ModelSerializer):
             'participants', 'participant_count', 'topic', 'created_at'
         ]
         read_only_fields = ['creator', 'participants']
+

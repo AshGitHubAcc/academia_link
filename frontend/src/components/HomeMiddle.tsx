@@ -21,11 +21,21 @@ export default function HomeMiddle() {
 
 
     return (
-    <div className="flex-[5] py-4 px-10">
+    <div className="h-auto w-[50%] mx-auto ">
+
+        <div className='flex justify-between h-14  mb-5'>
+            <div className=' flex items-end'>
+                <p className='font-bold text-[#6f6e6e] text-sm  text-end flex-none'>Total Rooms: 264</p>
+            </div>
+            <div>
+                <button className='flex-none h-10 text-[#bcbcbc]'>Dock +</button>
+            </div>
+        </div>
+
 
         {titles.map((ele, index)=> (
 
-            <DockLayout title={ele} body={body[index]} />
+            <DockLayout key={index} title={ele} body={body[index]} />
         ))
 
 

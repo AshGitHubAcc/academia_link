@@ -9,12 +9,13 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #202020;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 85%
 }
 
 a {
@@ -30,6 +31,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  transform: scale(1  );
+  transform-origin: top middle;
 }
 
 h1 {
@@ -118,4 +121,14 @@ button:hover::after {
 
 .follow-button:active {
   transform: scale(0.8);
+}
+
+
+.submit-button::after {
+  all:unset
+}
+
+.submit-button:active {
+  transform: scale(0.8);
+  border-radius:  0;
 }

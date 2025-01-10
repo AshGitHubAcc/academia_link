@@ -20,7 +20,7 @@ const settingsOptions = [
 
 
 
-export default function Header() {
+export default function Header({loginpage = null, registerpage = null}) {
     const [settingsOpened, setSettingsOpened] = useState(false)
 
     function eventMenuClicked() {
@@ -31,22 +31,23 @@ export default function Header() {
 
 
     return (
-    <header className="bg-[#171717] p-2 h-16 flex justify-around items-center text-[#ECECEC] relative">
+    <header className="bg-[#171717] p-2 h-20 flex justify-around items-center text-[#ECECEC] relativ fixed w-full z-10 text-[120%]">
 
         <div className='flex-1 flex gap-5 justify-start items-center h-full'>
 
-            <div onClick={eventMenuClicked} className='px-2 ml-5 mr-10 flex items-center justify-center
+            {loginpage || registerpage ? <div className='ml-[6.7rem]'></div> : <div onClick={eventMenuClicked} className='px-2 ml-5 mr-10 flex items-center justify-center
                  activate-effect hover:scale-x-150 transition-transform duration-500 ease-in-ou hover:cursor-pointer
             '>
                 <span className="material-symbols-outlined text-[#989494] text-3xl">menu</span>
-            </div>
+            </div>}
+
             <div className={`absolute top-[64px] left-0 bg-gray-400 w-[200px] opacity-gradient
                 transition-all duration-[500ms] ease-in-out ${settingsOpened ? 'h-[80vh]' :'h-0'}
-                flex flex-col gap-0 items-start overflow-hidden
+                flex flex-col gap-0 items-start overflow-hidden 
             `}>
                 {settingsOptions.map((ele,index)=> (
 
-                    <div className={`w-full text-center 
+                    <div key={index} className={`w-full text-center 
                         settings-options
                         hover:bg-gray-700 hover:font-extrabold hover:cursor-pointer
                         ${ settingsOpened ? 'opacity-100 py-3' : 'py-0 opacity-0' }
@@ -67,7 +68,8 @@ export default function Header() {
         </div>
 
         <div className=' flex-1 h-full flex justify-center items-center '>
-            <input type="text" placeholder='Search...' className='
+
+            {loginpage || registerpage ? <div></div> : <input type="text" placeholder='Search...' className='
             bg-[#1e1f1f] w-[80%] h-8 rounded-sm px-5 border-b-2 border-gray-600
             placeholder:text-[#78787c]
              focus:bg-[#838485] hover:bg-[#838485] transition-all duration-700 ease-in-out p-2  outline-none
@@ -75,15 +77,18 @@ export default function Header() {
              placeholder:transition-colors text-gray-400 text-center hover:text-black focus:text-black
              hover:w-full focus:w-full
             '  />
+            }
+            
         </div>
         <div className=' flex-1 h-full flex justify-end items-center'>
             <div className=' mr-10 flex gap-3'>
 
             <Link to='/login'>
-                <button className='text-blue-500 '>Login</button>
+                {loginpage ? null : <button className='text-blue-500 '>Login</button> }
+                
             </Link>
             <Link to='/singup'>
-                <button className='  text-[#bab8b8]'>Signup</button>
+                {registerpage ? null : <button className='  text-[#bab8b8]'>Signup</button>}
             </Link>
             
             </div>

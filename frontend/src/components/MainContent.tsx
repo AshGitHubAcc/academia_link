@@ -7,8 +7,8 @@ export default function MainContent() {
 
 
     return (
-    <div className='flex min-h-[90%]'>
-
+    <div className='flex min-h-[90%] w-full pt-24 '>
+        
         <HomeLeft/>
         <HomeMiddle/>
         <HomeRight/>
