@@ -35,7 +35,7 @@ class Folder(models.Model):
 
 class Topic(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False)
-    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='topics', null=True) 
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='topics', null=True, blank=True) 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -43,7 +43,7 @@ class Topic(models.Model):
         unique_together = ['name', 'folder']
 
     def __str__(self):
-        return f"{self.name} (in {self.folder.name})"
+        return f"{self.name} ({self.folder.name if self.folder else '____'})"
 
 
 

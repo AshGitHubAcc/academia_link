@@ -25,7 +25,7 @@ export default function HomeMiddle() {
 
         <div className='flex justify-between h-14  mb-5'>
             <div className=' flex items-end'>
-                <p className='font-bold text-[#6f6e6e] text-sm  text-end flex-none'>Total Rooms: 264</p>
+                <p className='font-bold text-[#828181] text-md  text-end flex-none'>Total Rooms: 264</p>
             </div>
             <div>
                 <button className='flex-none h-10 text-[#bcbcbc]'>Dock +</button>

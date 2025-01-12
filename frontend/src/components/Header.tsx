@@ -38,7 +38,7 @@ export default function Header({loginpage = null, registerpage = null}) {
             {loginpage || registerpage ? <div className='ml-[6.7rem]'></div> : <div onClick={eventMenuClicked} className='px-2 ml-5 mr-10 flex items-center justify-center
                  activate-effect hover:scale-x-150 transition-transform duration-500 ease-in-ou hover:cursor-pointer
             '>
-                <span className="material-symbols-outlined text-[#989494] text-3xl">menu</span>
+                <span className="material-symbols-outlined text-[#cbc5c5] text-3xl">menu</span>
             </div>}
 
             <div className={`absolute top-[64px] left-0 bg-gray-400 w-[200px] opacity-gradient
@@ -61,7 +61,7 @@ export default function Header({loginpage = null, registerpage = null}) {
             </div>
             
             <Link to='/home' className='flex gap-5 justify-center items-center px-5 hover:scale-[0.98]
-             transition-all duration-500 hover:cursor-pointer hover:!text-[#787474] text-[#a6a2a2]'>
+             transition-all duration-500 hover:cursor-pointer hover:!text-[#787474] text-[#cbc5c5]'>
                 <img src={test_logo} alt="website logo" className='w-9  oll-in-blurred-left'/>
                 <p className='font-bold  text-xl'>Website Logo</p>
             </Link>
@@ -75,7 +75,7 @@ export default function Header({loginpage = null, registerpage = null}) {
              focus:bg-[#838485] hover:bg-[#838485] transition-all duration-700 ease-in-out p-2  outline-none
              focus:placeholder:text-[#838485] hover:placeholder:text-[#000000] placeholder:duration-500
              placeholder:transition-colors text-gray-400 text-center hover:text-black focus:text-black
-             hover:w-full focus:w-full
+             hover:w-full focus:w-full py-5
             '  />
             }
             
@@ -88,7 +88,7 @@ export default function Header({loginpage = null, registerpage = null}) {
                 
             </Link>
             <Link to='/singup'>
-                {registerpage ? null : <button className='  text-[#bab8b8]'>Signup</button>}
+                {registerpage ? null : <button className='  text-[#cbc5c5]'>Signup</button>}
             </Link>
             
             </div>

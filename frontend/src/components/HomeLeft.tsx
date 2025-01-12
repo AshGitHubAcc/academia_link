@@ -1,135 +1,88 @@
 
 
 
-// import {useState, useRef} from 'react'
-
-// export default function HomeLeft() {
-//     const folderRef = useRef(null);
-//     const [expandFolder, setExpandFolder] = useState(false)
-
-//     function applyFolderExpand() {
-
-//     }
-
-//     // const topics = [
-//     //     'All',
-//     //     'General',
-//     //     'Math',
-//     //     'CS',
-//     //     'Algor and Data',
-//     //     'Orgo',
-//     //     'General',
-//     //     'Math',
-//     //     'CS',
-  
-//     // ]
-
-
-//     return (
-//     <div className={` h-[600px] overflow-scroll p-5 rounded-md  bg-[#3e4345] w-64 fixed top-[14%] flex-col gap-5 
-        
-//     `}>
-
-//         <div 
-//             onClick={()=> setExpandFolder(!expandFolder)}
-//             ref={folderRef}
-//             style={{
-//             height: expandFolder 
-//             ? `${folderRef.current?.scrollHeight}px` 
-//             : '28px'
-//         }}
-//         className={`
-//             overflow-hidden 
-//             transition-all 
-//             duration-[500ms] 
-//             ease-in-out
-//             bg-green-400
-//         `}
-//         >
-//             Computer Sice
-//             <ul className={`ml-5 scale-y-0 origin-top transition-all duration-300 ease-in-out
-//                     ${expandFolder ? 'scale-y-100' :   ''}
-//                 `}>
-
-
-            
-//                 <li>
-//                     Fundement of CS
-//                 </li>
-//                 <li>
-//                     OOD
-//                 </li>
-//                 <li>
-//                     Algo and data
-//                 </li>
-//             </ul>
-             
-//         </div>
-
-//     </div>
-//     )
-// }
-
-
-
-
+import { useParams } from "react-router"
 import { useEffect, useState } from 'react'
 import api from '../api'
+import { Link } from 'react-router-dom'
 
 export default function HomeLeft() {
 
-    const mainTopics = [
-        "Computer Science",
-        "Mathematics",
-        "Biology",
-        "Physics",
-        "Chemistry",
-        "Engineering",
-        "Medicine",
-        "Business",
-        "Economics",
-        "Psychology",
-        "Education",
-        "Sociology",
-        "Political Science",
-        "Law",
-        "Environmental Science",
-        "Philosophy",
-        "History",
-        "Art and Design",
-        "Communications",
-        "Literature",
-        "Anthropology",
-        "Linguistics",
-        "Astronomy",
-        "Geology",
-        "Theology/Religious Studies"
-    ]
-    
 
-    // async function fetchAllTopics() {
-    //     try {
+    // const mainTopics = [
+    //     "General",
+    //     'School Events',
+    //     "Computer Science",
+    //     "Mathematics",
+    //     "Biology",
+    //     "Physics",
+    //     "Chemistry",
+    //     "Engineering",
+    //     "Medicine",
+    //     "Business",
+    //     "Economics",
+    //     "Psychology",
+    //     "Education",
+    //     "Sociology",
+    //     "Political Science",
+    //     "Law",
+    //     "Environmental Science",
+    //     "Philosophy",
+    //     // "History",
+    //     // "Art and Design",
+    //     // "Communications",
+    //     // "Literature",
+    //     // "Anthropology",
+    //     // "Linguistics",
+    //     // "Astronomy",
+    //     // "Geology",
+    //     // "Theology/Religious Studies"
+    // ]
+
+
+    let params = useParams()
+
+    const [allTopics, setAllTopics] = useState([])
+
+
+    async function fetchAllDocks() {
+
+        const url = params.query
+        console.log()
+
+        try {
             
-    //         const response = await api.get('/api/topics/')
-    //         console.log(response.data)
-    //         setTopics(response.data.results)
-    //     } catch (error) {
-            
-    //     }
-    // }
+            const response = await api.get('/api/topics/')
+
+            console.log(response.data.results)
+            setAllTopics(response.data.results)
+        }
+        catch (e) {
+
+        }
+    }
+
+    useEffect(()=> {
+
+        fetchAllDocks()
+
+    }, [])
 
 
 
-    // useEffect(()=>{
-    //     fetchAllTopics()
-    // }, [])
+
 
     return (
-    <div className=' h-[600px] overflow-scroll p-5 rounded-md  bg-[#3e4345] w-64 fixed top-[14%] flex-col gap-5 pr-9
+    <div className=' h-[600px]  rounded-md  w-64 fixed top-[14%] flex-col gap-6 pl-10
     '>
+        {allTopics.map((ele, index)=> (
 
-        {mainTopics.map((ele, index)=> (
-                <div key={index} className="p-2">{ele}</div>
+                <Link key={index} to={`/home/?query=${ele.name}`}>
+                    <div  className="p-3 font-[550] text-[#cfcfcf] hover:cursor-pointer 
+                    hover:bg-[#444444] hover:text-[#fbfbfb]
+                        transition-all duration-200 ease-in-out hover:scale-110 text-xl py-4
+                    ">{ele.name}</div>
+                </Link>
             ))
         }
 

@@ -15,7 +15,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 85%
+  font-size: 90%
+
 }
 
 a {
@@ -92,7 +93,6 @@ button:hover::after {
     background-color: #f9f9f9;
   }
 }
-
 
 
 

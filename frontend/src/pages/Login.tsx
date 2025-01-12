@@ -66,8 +66,9 @@ export default function Login() {
 
         <Header loginpage={true}/>
 
+        <div className="h-20 w-20 mb-10"></div>
 
-        <div className=" w-[50%] flex flex-col items-center justify-center pb-10 bg-gray-600">
+        <div className=" h-full w-[50%] flex flex-col items-center justify-center pb-10 bg-[#11111161] mx-auto">
             <div>
                 <h1 className="text-[#a8a8a8] text-center text-4xl">Login</h1>
                 <div className="bg-gray-400 w-[300px] h-[2px] mt-3 mb-10"></div>

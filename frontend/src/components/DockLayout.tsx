@@ -20,15 +20,15 @@ export default function DockLayout({title, body}) {
             <div className='flex gap-4 justify-center items-center'>
                 <img src={pfp} alt="Profile picture" className='h-12 rounded-xl border-2 border-blue-400' />
                 <div className='flex flex-col'>
-                    <p className='font-bold text-[#abaaaa]'>Zoey Lang</p>
-                    <p className='text-sm text-[#8a8989]'>@zoeylang</p>
+                    <p className='font-bold text-[#cbc5c5]'>Zoey Lang</p>
+                    <p className='text-sm text-[#acaaaa]'>@zoeylang</p>
                 </div>
                 
             </div>
             
             <button
                 className={`${
-                    isFollowed ? "bg-transparent text-[#2564ebda] !px-2" : "!px-4 text-[#cccbcb] bg-[#1a68ee89]"
+                    isFollowed ? "bg-transparent text-[#2564ebda] !px-2" : "!px-4 text-[#cdc6c6] bg-[#1a68ee89]"
                 }  !py-1 rounded-[6px] mb-auto follow-button text-sm hover:bg-[#264881]
                 
                 
@@ -41,15 +41,15 @@ export default function DockLayout({title, body}) {
 
 
 
-        <div className="flex-col px-1 py-3 text-small text-[#c9c8c8eb] flex justify-between">
+        <div className="flex-col px-1 py-3 text-small text-[#dfd8d8] flex justify-between">
             <p className="text-[20px] font-bold">
                 {title}
             </p>
-            <p className="pb-1">{body.length > 365 ? body.slice(0, 365) + "..." : body}</p>
+            <p className="pb-1 text-[#cbc5c5]">{body.length > 365 ? body.slice(0, 365) + "..." : body}</p>
             
         </div>
 
-        <div className="px-2 flex flex-col items-start text-[#96969699]" >
+        <div className="px-2 flex flex-col items-start text-[#979292]" >
 
             <p className="pt-[3px]">
                 #Python #C++
@@ -66,7 +66,7 @@ export default function DockLayout({title, body}) {
                     </div>
                 </div>
 
-                <p className="text-[#9696967a] text-small">
+                <p className=" text-small">
                     12/9/2025
                 </p>
 
