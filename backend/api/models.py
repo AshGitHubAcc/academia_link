@@ -33,6 +33,8 @@ class Folder(models.Model):
     def __str__(self):
         return f"{self.name} (owned by {self.owner.name})"
 
+
+
 class Topic(models.Model):
     name = models.CharField(max_length=50, null=False, blank=False)
     folder = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name='topics', null=True, blank=True) 

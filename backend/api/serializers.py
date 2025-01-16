@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.core.validators import EmailValidator
 from .models import CustomUser, Room, Message, Topic, Folder
 
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -13,6 +15,24 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return CustomUser.objects.create_user(**validated_data)
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        data.update({
+            'user': {
+                'id': self.user.id,
+                'username': self.user.username,
+                'name': self.user.name,
+                'state': self.user.state,
+                'university': self.user.university,
+            }
+        })
+        return data
+
 
 
 

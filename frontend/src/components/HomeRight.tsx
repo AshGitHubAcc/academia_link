@@ -6,7 +6,7 @@ export default function HomeRight() {
 
 
     return (
-    <div className="absolute">
+    <div className=" w-64">
     </div>
 
     )

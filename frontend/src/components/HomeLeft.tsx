@@ -1,14 +1,4 @@
 
-
-
-import { useParams } from "react-router"
-import { useEffect, useState } from 'react'
-import api from '../api'
-import { Link } from 'react-router-dom'
-
-export default function HomeLeft() {
-
-
     // const mainTopics = [
     //     "General",
     //     'School Events',
@@ -38,54 +28,54 @@ export default function HomeLeft() {
     //     // "Geology",
     //     // "Theology/Religious Studies"
     // ]
+import { useEffect, useState } from 'react'
+import api from '../api'
+import { Link } from 'react-router-dom'
 
 
-    let params = useParams()
+
+interface Topics {
+    name: String
+    id: number
+}
+
+
+export default function HomeLeft() {
+
 
     const [allTopics, setAllTopics] = useState([])
 
-
-    async function fetchAllDocks() {
-
-        const url = params.query
-        console.log()
-
+    async function fetchMainTopics() {
         try {
-            
             const response = await api.get('/api/topics/')
-
-            console.log(response.data.results)
             setAllTopics(response.data.results)
+            console.log(response.data.results)
         }
         catch (e) {
-
+            console.log(e.response.statusText)
         }
     }
 
     useEffect(()=> {
-
-        fetchAllDocks()
-
+        fetchMainTopics()
     }, [])
 
 
 
-
-
     return (
-    <div className=' h-[600px]  rounded-md  w-64 fixed top-[14%] flex-col gap-6 pl-10
-    '>
-        {allTopics.map((ele, index)=> (
+        <div className='h-auto  w-64 flex-col pl-10  mt-16 0'>
 
-                <Link key={index} to={`/home/?query=${ele.name}`}>
-                    <div  className="p-3 font-[550] text-[#cfcfcf] hover:cursor-pointer 
-                    hover:bg-[#444444] hover:text-[#fbfbfb]
-                        transition-all duration-200 ease-in-out hover:scale-110 text-xl py-4
-                    ">{ele.name}</div>
-                </Link>
-            ))
-        }
+            {allTopics.map((ele: Topics, index: number)=> (
 
-    </div>
+                    <Link key={index} to={`/home/?filter_topic_id=${ele.id}`}>
+                        <div  className="p-3 font-[550] text-[#cfcfcf] hover:cursor-pointer 
+                        hover:bg-[#444444] hover:text-[#fbfbfb]
+                            transition-all duration-200 ease-in-out hover:scale-110 text-xl py-4
+                        ">{ele.name}</div>
+                    </Link>
+                ))
+            }
+
+        </div>
     )
 }

@@ -49,7 +49,7 @@ export default function Login() {
         
         try {
             const response = await api.post('/api/auth/login/', {'username': email, 'password': password})
-            console.log('Registration Successful', response.data);
+            console.log('Registration Successful', response);
             localStorage.setItem(ACCESS_TOKEN, response.data.access)
             localStorage.setItem(REFRESH_TOKEN, response.data.refresh)
             navigate('/home')

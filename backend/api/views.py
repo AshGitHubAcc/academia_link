@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import CustomUser, Room, Message, Topic
-from .serializers import UserSerializer, RoomSerializer, MessageSerializer, TopicSerializer
+from .serializers import UserSerializer, RoomSerializer, MessageSerializer, TopicSerializer, CustomTokenObtainPairSerializer
 
 
 import json
@@ -17,6 +17,14 @@ file_path = os.path.join(os.path.dirname(__file__), 'states_universities.json')
 STATES_UNIVERSITIES = None
 with open(file_path, 'r') as file:
     STATES_UNIVERSITIES = json.load(file)
+
+
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 
@@ -68,11 +76,6 @@ class CreateUserView(generics.CreateAPIView):
 
 
 
-
-
-
-
-
 class RoomViewSet(generics.ListCreateAPIView):
     serializer_class = RoomSerializer
     permission_classes = [IsAuthenticated]
@@ -80,25 +83,12 @@ class RoomViewSet(generics.ListCreateAPIView):
     search_fields = ['title', 'body', 'topic__name']
 
     def get_queryset(self):
-
         queryset = Room.objects.all()
-        query_string = self.request.query_params.get('topic', None)
-
-        print("=========", query_string)
-        
-        if query_string:
-            filtered = queryset.filter(topic__name=query_string)
-            if len(filtered) != 0:
-                queryset = filtered
-            else:
-                queryset = queryset.filter(title__contains=query_string)
-
         return queryset
 
     def perform_create(self, serializer):
-        
-        topic_id = self.request.data.get('topic')
-        serializer.save(creator=self.request.user, topic=Topic.objects.get(id=topic_id))
+        topic = self.request.data.get('topic')
+        serializer.save(creator=self.request.user, topic=Topic.objects.get(name=topic))
 
 
 

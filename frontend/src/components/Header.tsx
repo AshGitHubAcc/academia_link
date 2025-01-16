@@ -1,12 +1,12 @@
-
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-
 import test_logo from '../assets/test_logo.svg';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
+
+interface HeaderProps {
+    loginpage?: boolean,
+    registerpage?: boolean,
+}
 
 const settingsOptions = [
     'asdasdasd',
@@ -20,7 +20,7 @@ const settingsOptions = [
 
 
 
-export default function Header({loginpage = null, registerpage = null}) {
+export default function Header({loginpage, registerpage}: HeaderProps) {
     const [settingsOpened, setSettingsOpened] = useState(false)
 
     function eventMenuClicked() {

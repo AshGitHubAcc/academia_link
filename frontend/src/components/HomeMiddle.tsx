@@ -1,48 +1,65 @@
+import { useSearchParams } from "react-router-dom"  
+
 import DockLayout from './DockLayout'
+import api from '../api'
+import { useEffect, useState } from "react"
+
+export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, refetchDocksSignal, setRefetchDocksSignal}) {
+    const [searchParams] = useSearchParams()
+    const [docks, setDocks] = useState([])
+
+    
+
+    async function fetchDocks() {
+        
+        const topicId = searchParams.get('filter_topic_id')
+        const url = topicId ? `/api/rooms/topic/${topicId}/` : '/api/rooms/'
 
 
-export default function HomeMiddle() {
 
-    const titles = [
-        'Calc 2 test practice',
-        'algo midterm study with me',
-        'Meet at snells for something',
-        'Calc 2 test practice',
-        'Studying for Cal 2 Finals at Snells. 5 people only'
-    ]
-    const body = [
-        'Lorem ipsum dolor sit amet consectetu',
-        'r adipisicing elit. Voluptas recusandae unde aperiam aspernatur enim molestiae itaque ducimus id a, sapiente dignissimos eaque eligendi temporibus inciduntae unde aperiam aspernatur enim molestiae itaque ducimus id a, sapiente dignissimos eaque eligendi temporibus inciduntae unde aperiam aspernatur enim molestiae itaque ducimus id a, sapiente dignissimos eaque eligendi temporibus inciduntae unde aperiam aspernatur enim molestiae itaque ducimus id a, sapiente dignissimos eaque eligendi temporibus inciduntae unde aperiam aspernatur enim molestiae itaque ducimus id a, sapiente dignissimos eaque eligendi temporibus incidunt, natus at aliquam quo accusantium.',
-        'r adipisicing elit. Voluptas recusandae unde aperiam aspernatur enim molestiae itaque ducimus id a, sa',
-        'r adipisicing elit. Voluptas recusandae unde aperiam aspernatur enim mucimus id a, sa',
-        'r adipisicing elit. Voluptas recusandae unde aperiam aspernatur enim molestiae itaque ducimus id a, sapiente quam quo accusantium.',
+        try {
+            const response = await api.get('/api/rooms/')
+            console.log(response.data.results)
+            setDocks(response.data.results)
+        } catch (error) {
+            console.log(error.response.statusText)
+        }
+    }
 
-    ]
+    useEffect(()=>{
+        fetchDocks()
+    },[searchParams, refetchDocksSignal])
+
+
+
+
 
 
     return (
-    <div className="h-auto w-[50%] mx-auto ">
+        <div className="h-auto w-[50%]">
 
-        <div className='flex justify-between h-14  mb-5'>
-            <div className=' flex items-end'>
-                <p className='font-bold text-[#828181] text-md  text-end flex-none'>Total Rooms: 264</p>
+
+            <div className='flex justify-between h-14  mb-5'>
+                <div className=' flex items-end'>
+                    <p className='font-bold text-[#828181] text-md  text-end flex-none'>Total Rooms: 264</p>
+                </div>
+                <div>
+                    <button onClick={()=> setDockCreationOpened(!dockCreationOpened)} className='flex-none h-10 text-[#bcbcbc]'>Dock +</button>
+                </div>
             </div>
-            <div>
-                <button className='flex-none h-10 text-[#bcbcbc]'>Dock +</button>
-            </div>
+
+
+            {docks.map((ele, index)=> (
+
+                <DockLayout key={index} username={ele.creator.username} name={ele.creator.name} title={ele.title} 
+                body={ele.body} topic={ele.topic.name} createdAt={ele.created_at}
+                
+
+                />
+            ))
+
+
+            }
         </div>
-
-
-        {titles.map((ele, index)=> (
-
-            <DockLayout key={index} title={ele} body={body[index]} />
-        ))
-
-
-        }
-        
-        
-
-    </div>
     )
 }
