@@ -49,7 +49,6 @@ export default function HomeLeft() {
         try {
             const response = await api.get('/api/topics/')
             setAllTopics(response.data.results)
-            console.log(response.data.results)
         }
         catch (e) {
             console.log(e.response.statusText)

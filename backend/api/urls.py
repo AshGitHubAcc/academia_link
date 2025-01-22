@@ -7,7 +7,6 @@ from .views import CustomTokenObtainPairView
 urlpatterns = [
     path('auth/register/', views.CreateUserView.as_view(), name='register'),
     path('auth/login/', CustomTokenObtainPairView.as_view(), name='login'),
-
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
     path('rooms/', views.RoomViewSet.as_view(), name='room-list'),

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import api from "../api"
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
+import { ACCESS_TOKEN, REFRESH_TOKEN, USER_DATA } from "../constants"
 import { useNavigate } from "react-router"
 
 import Header from '../components/Header'
@@ -49,9 +49,11 @@ export default function Login() {
         
         try {
             const response = await api.post('/api/auth/login/', {'username': email, 'password': password})
-            console.log('Registration Successful', response);
+            console.log('Registration Successful', response.data.user);
             localStorage.setItem(ACCESS_TOKEN, response.data.access)
             localStorage.setItem(REFRESH_TOKEN, response.data.refresh)
+            localStorage.setItem(USER_DATA, JSON.stringify(response.data.user))
+            
             navigate('/home')
 
 
@@ -77,7 +79,7 @@ export default function Login() {
             <form action="" onSubmit={handleSubmit} className="flex flex-col mt-5 mb-32 w-[40%] items-center justify-center ">
 
 
-                <input onChange={(e)=> setEmail(e.target.value)} value={email} type="text" placeholder='School Email' className="
+                <input onChange={(e)=> setEmail(e.target.value)} value={email} type="email" placeholder='School Email' className="
                     flex-grow-0 text-[#a1a1a1]
                     py-2 px-10 text-center rounded-[4px] border-blue-500 focus:border-b-2 outline-none
                     transition-all duration-[700ms] ease-in-out hover:w-[55%] w-[300px] focus:w-[55%]

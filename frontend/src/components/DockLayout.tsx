@@ -2,32 +2,24 @@
 import { useState } from 'react';
 import pfp from '../assets/pfp.png'
 
+import api from '../api'
+
 interface DockLayoutProps {
-    username: string;
-    name: string;
-    title: string;
-    body: string;
-    topic: string;
-    createdAt: string;
-}
-
-const dateConfig: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'UTC',
+    dockData: {};
+    userData: {};
+    refetchDocksSignal: number;
+    setRefetchDocksSignal: (num: number)=>void;
 }
 
 
-export default function DockLayout({username, name, title, body, topic, createdAt}: DockLayoutProps) {
+
+export default function DockLayout({dockData, userData, refetchDocksSignal, setRefetchDocksSignal}: DockLayoutProps) {
     
     const [isFollowed, setIsFollowed] = useState(false)
     
     function formattedData() {
 
-        const date = new Date(createdAt);
+        const date = new Date(dockData?.created_at);
         const hours = date.getHours();
         const minutes = date.getMinutes();
         const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -37,12 +29,24 @@ export default function DockLayout({username, name, title, body, topic, createdA
         return `${formattedHour}:${formattedMinute} ${ampm}, ${date.toLocaleString('en-US', { 
             month: 'short', 
             day: 'numeric', 
-            year: 'numeric' 
+            year: 'numeric'
         })}`;
     }
     
     
-    
+    async function handleDockDelete() {
+
+        try {
+
+            const response = await api.delete(`/api/rooms/${dockData?.id}`)
+            setRefetchDocksSignal(refetchDocksSignal+1)
+
+        } catch (error) {
+            console.log("Error: ", error)
+        }
+
+
+    }
 
     return (
 
@@ -55,39 +59,58 @@ export default function DockLayout({username, name, title, body, topic, createdA
             <div className='flex gap-4 justify-center items-center'>
                 <img src={pfp} alt="Profile picture" className='h-12 rounded-xl border-2 border-blue-400' />
                 <div className='flex flex-col'>
-                    <p className='font-bold text-[#cbc5c5]'>{name}</p>
-                    <p className='text-sm text-[#acaaaa]'>{username.slice(0, username.indexOf("@"))}</p>
+                    <p className='font-bold text-[#cbc5c5]'>{dockData?.creator?.name}</p>
+                    <p className='text-sm text-[#acaaaa]'>{dockData?.creator?.username.slice(0, dockData?.creator?.username.indexOf("@"))}</p>
                 </div>
                 
             </div>
             
-            <button
-                className={`${
-                    isFollowed ? "bg-transparent text-[#2564ebda] !px-2" : "!px-4 text-[#cdc6c6] bg-[#1a68ee89]"
-                }  !py-1 rounded-[6px] mb-auto follow-button text-sm hover:bg-[#264881]
+            {
+
+                userData?.username === dockData?.creator?.username ?
                 
-                
-                `}
-                onClick={() => setIsFollowed(!isFollowed)}
-                >
-                {isFollowed ? "Unfollow" : "Follow"}
-            </button>
+                <button onClick={handleDockDelete}
+                    className={` 
+                        px-4 !pl-4 text-[#cdc6c6] bg-[#ee1a1a89] hover:bg-[#92252589]
+                        py-1 rounded-[6px] mb-auto follow-button text-sm
+                    
+                    
+                    `}
+                    >
+                    Delete
+                </button>
+                :
+                <button
+                    className={`${
+                        isFollowed ? "bg-transparent text-[#76a0fbda] !px-2" : "!px-4 text-[#cdc6c6] bg-[#1a68eedb]"
+                    }  !py-1 rounded-[6px] mb-auto follow-button text-sm hover:bg-[#264881]
+                    
+                    
+                    `}
+                    onClick={() => setIsFollowed(!isFollowed)}
+                    >
+                    {isFollowed ? "Unfollow" : "Follow"}
+                </button>
+           
+
+
+            }
         </div>
 
 
 
         <div className="flex-col px-1 py-3 text-small text-[#dfd8d8] flex justify-between">
             <p className="text-[20px] font-bold">
-                {title}
+                {dockData?.title}
             </p>
-            <p className="pb-1 text-[#cbc5c5]">{body.length > 365 ? body.slice(0, 365) + "..." : body}</p>
+            <p className="pb-1 text-[#cbc5c5]">{dockData?.body.length > 365 ? dockData?.body.slice(0, 365) + "..." : dockData?.body}</p>
             
         </div>
 
         <div className="px-2 flex flex-col items-start text-[#979292]" >
 
             <p className="pt-[3px]">
-                #{topic}
+                #{dockData?.topic.name}
             </p>
             <div className="flex justify-between w-full">
                 <div className="flex gap-3">

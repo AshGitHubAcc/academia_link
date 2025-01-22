@@ -4,7 +4,9 @@ import DockLayout from './DockLayout'
 import api from '../api'
 import { useEffect, useState } from "react"
 
-export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, refetchDocksSignal, setRefetchDocksSignal}) {
+
+
+export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, refetchDocksSignal, setRefetchDocksSignal, userData}) {
     const [searchParams] = useSearchParams()
     const [docks, setDocks] = useState([])
 
@@ -19,8 +21,8 @@ export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, r
 
         try {
             const response = await api.get('/api/rooms/')
-            console.log(response.data.results)
             setDocks(response.data.results)
+            console.log(response.data.results)
         } catch (error) {
             console.log(error.response.statusText)
         }
@@ -28,6 +30,7 @@ export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, r
 
     useEffect(()=>{
         fetchDocks()
+        console.log(refetchDocksSignal)
     },[searchParams, refetchDocksSignal])
 
 
@@ -41,7 +44,7 @@ export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, r
 
             <div className='flex justify-between h-14  mb-5'>
                 <div className=' flex items-end'>
-                    <p className='font-bold text-[#828181] text-md  text-end flex-none'>Total Rooms: 264</p>
+                    <p className='font-bold text-[#828181] text-md  text-end flex-none'>Total Rooms: {docks.length}</p>
                 </div>
                 <div>
                     <button onClick={()=> setDockCreationOpened(!dockCreationOpened)} className='flex-none h-10 text-[#bcbcbc]'>Dock +</button>
@@ -51,10 +54,11 @@ export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, r
 
             {docks.map((ele, index)=> (
 
-                <DockLayout key={index} username={ele.creator.username} name={ele.creator.name} title={ele.title} 
-                body={ele.body} topic={ele.topic.name} createdAt={ele.created_at}
-                
 
+                <DockLayout key={index} dockData={ele} userData={userData}
+                refetchDocksSignal={refetchDocksSignal} setRefetchDocksSignal={setRefetchDocksSignal}
+
+                
                 />
             ))
 

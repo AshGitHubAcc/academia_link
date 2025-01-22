@@ -12,19 +12,7 @@ export default function Home() {
 
     const [dockCreationOpened, setDockCreationOpened] = useState(false)
     const [refetchDocksSignal, setRefetchDocksSignal] = useState(0)
-
-
-    useEffect(()=>{
-        console.log(refetchDocksSignal)
-    }, [refetchDocksSignal])
-
-    async function test() {
-        const userResponse = await api.get('/api/user', {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-    
-        setUser(userResponse.data);
-    }
+    const userData = JSON.parse(localStorage.getItem('userData'))
     
     return (
         <div className="w-full h-auto bg-[#303030b9] relative">
@@ -36,8 +24,9 @@ export default function Home() {
                 <HomeLeft/>
                 <HomeMiddle dockCreationOpened={dockCreationOpened} setDockCreationOpened={setDockCreationOpened}
                     refetchDocksSignal={refetchDocksSignal} setRefetchDocksSignal={setRefetchDocksSignal}
+                    userData={userData}
                 />
-                <HomeRight/>    
+                <HomeRight/> 
             </div>
 
 
