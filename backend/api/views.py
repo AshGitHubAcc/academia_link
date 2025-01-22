@@ -1,5 +1,6 @@
 
-        
+from django.db.models import Q
+
 
 from colorama import init, Fore, Style
 init()
@@ -84,6 +85,17 @@ class RoomViewSet(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Room.objects.all()
+        
+        topic_id = self.request.query_params.get('filter_topic_id')
+        if topic_id:
+            queryset = queryset.filter(topic_id=topic_id)
+        
+        query = self.request.query_params.get('query')
+        if query:
+            queryset = queryset.filter(
+                Q(title__icontains=query) | Q(body__icontains=query)
+            )
+        
         return queryset
 
     def perform_create(self, serializer):

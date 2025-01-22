@@ -10,7 +10,7 @@ urlpatterns = [
     path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
     path('rooms/', views.RoomViewSet.as_view(), name='room-list'),
-    # path('rooms/topic/<int:topic_id>/', views.RoomViewSet.as_view(), name='filtered-room-list'),
+    path('rooms/topic/<int:topic_id>/', views.RoomViewSet.as_view(), name='filtered-room-list'),
 
     path('rooms/<int:id>/', views.RoomDetailView.as_view(), name='room-detail'),
 

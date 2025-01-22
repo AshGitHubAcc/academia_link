@@ -13,24 +13,26 @@ export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, r
     
 
     async function fetchDocks() {
+        const query = searchParams.get('query') || ''
+        const filterTopicId = searchParams.get('filter_topic_id') || ''
         
-        const topicId = searchParams.get('filter_topic_id')
-        const url = topicId ? `/api/rooms/topic/${topicId}/` : '/api/rooms/'
-
-
 
         try {
-            const response = await api.get('/api/rooms/')
+
+            const response = await api.get(`/api/rooms/`, {
+                params: {
+                    query: query,
+                    filter_topic_id: filterTopicId,
+                },
+            });
             setDocks(response.data.results)
-            console.log(response.data.results)
         } catch (error) {
-            console.log(error.response.statusText)
+            console.error('Error fetching rooms:', error)
         }
     }
 
     useEffect(()=>{
         fetchDocks()
-        console.log(refetchDocksSignal)
     },[searchParams, refetchDocksSignal])
 
 

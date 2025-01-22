@@ -1,6 +1,6 @@
 import test_logo from '../assets/test_logo.svg';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 interface HeaderProps {
@@ -21,13 +21,30 @@ const settingsOptions = [
 
 
 export default function Header({loginpage, registerpage}: HeaderProps) {
+    const navigate = useNavigate()
     const [settingsOpened, setSettingsOpened] = useState(false)
-
+    const [searchValue, setSearchValue] = useState('')
+    
     function eventMenuClicked() {
         setSettingsOpened(!settingsOpened)
     }
 
+    function handleSearchSubmit(e) {
+        
+        if (e.key ==='Enter') {
 
+            const queryStrings = new URLSearchParams(window.location.search)
+            const topicId = queryStrings.get('filter_topic_id')
+
+            if (topicId) {
+                queryStrings.set('filter_topic_id', topicId)
+                
+            }
+            queryStrings.set('query', searchValue)
+
+            navigate(`/home/?${queryStrings.toString()}`)
+        }
+    }
 
 
     return (
@@ -69,7 +86,10 @@ export default function Header({loginpage, registerpage}: HeaderProps) {
 
         <div className=' flex-1 h-full flex justify-center items-center '>
 
-            {loginpage || registerpage ? <div></div> : <input type="text" placeholder='Search...' className='
+            {loginpage || registerpage ? <div></div> : 
+            
+            <input onKeyDown={handleSearchSubmit} value={searchValue} onChange={(e)=>setSearchValue(e.target.value)}
+            type="text" placeholder='Search...' className='
             bg-[#1e1f1f] w-[80%] h-8 rounded-sm px-5 border-b-2 border-gray-600
             placeholder:text-[#78787c]
              focus:bg-[#838485] hover:bg-[#838485] transition-all duration-700 ease-in-out p-2  outline-none

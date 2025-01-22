@@ -63,6 +63,12 @@ export default function HomeLeft() {
 
     return (
         <div className='h-auto  w-64 flex-col pl-10  mt-16 0'>
+            <Link to={`/home`}>
+                <div  className="p-3 font-[550] text-[#cfcfcf] hover:cursor-pointer 
+                hover:bg-[#444444] hover:text-[#fbfbfb]
+                    transition-all duration-200 ease-in-out hover:scale-110 text-xl py-4
+                ">All</div>
+            </Link>
 
             {allTopics.map((ele: Topics, index: number)=> (
 
