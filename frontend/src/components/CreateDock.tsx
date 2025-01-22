@@ -3,9 +3,9 @@ import api from "../api"
 
 interface CreateDockProps {
   dockCreationOpened: boolean
-  setDockCreationOpened: (bool: boolean) => boolean
+  setDockCreationOpened: Dispatch<SetStateAction<boolean>>
   refetchDocksSignal: number
-  setRefetchDocksSignal: (num: number) => number
+  setRefetchDocksSignal: Dispatch<SetStateAction<number>>
 }
 
 export default function CreateDock({ dockCreationOpened, setDockCreationOpened, refetchDocksSignal, setRefetchDocksSignal,}: CreateDockProps) {

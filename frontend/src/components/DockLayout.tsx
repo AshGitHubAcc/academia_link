@@ -8,7 +8,7 @@ interface DockLayoutProps {
     dockData: {};
     userData: {};
     refetchDocksSignal: number;
-    setRefetchDocksSignal: (num: number)=>void;
+    setRefetchDocksSignal: Dispatch<SetStateAction<number>>
 }
 
 

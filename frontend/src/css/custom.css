@@ -9,7 +9,9 @@
 
 
 .dock-creation {
-  box-shadow: -20px 20px 100px rgba(0, 0, 0, 0.7);
+  /* box-shadow: 0px -10px 100px rgba(50, 62, 77, 0.679); */
+  box-shadow: -10px 20px 150px rgba(0,0,0, 0.679);
+
   transition: 
     opacity 0.3s ease-in-out, 
     transform 0.3s cubic-bezier(0, -0.5, 0.5, 1.5),
@@ -55,4 +57,26 @@
 .submit-button:active {
   transform: scale(0.8);
   border-radius:  0;
+}
+
+
+
+
+.blurred {
+  filter: blur(5px);
+  pointer-events: none; /* Prevent interactions with blurred elements */
+  transition: filter 0.3s ease;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Dim background effect */
+  z-index: 50; /* Ensure it is above the blurred content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
