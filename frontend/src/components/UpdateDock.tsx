@@ -2,13 +2,13 @@ import { useEffect, useState, useRef } from "react"
 import api from "../api"
 
 interface CreateDockProps {
-  dockCreationOpened: boolean
-  setDockCreationOpened: Dispatch<SetStateAction<boolean>>
+  dockUpdateOpened: boolean
+  setDockUpdateOpened: Dispatch<SetStateAction<boolean>>
   refetchDocksSignal: number
   setRefetchDocksSignal: Dispatch<SetStateAction<number>>
 }
 
-export default function CreateDock({ dockCreationOpened, setDockCreationOpened, refetchDocksSignal, setRefetchDocksSignal,}: CreateDockProps) {
+export default function UpdateDock({ dockUpdateOpened, setDockUpdateOpened, refetchDocksSignal, setRefetchDocksSignal,}: CreateDockProps) {
 
 
   const [style, setStyle] = useState("")
@@ -21,6 +21,18 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
     body: "",
     topic: "",
   })
+
+
+  async function fetchDock() {
+
+    try {
+      
+      // const response = await api.get(`/api/rooms/${}`)
+
+    } catch (error) {
+      
+    }
+  }
 
   const [errorTitle, setErrorTitle] = useState("*")
   const [errorTopic, setErrorTopic] = useState("*")
@@ -39,7 +51,7 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
   }, [dockData])
 
   useEffect(() => {
-    if (dockCreationOpened) {
+    if (dockUpdateOpened) {
       setVisiable(true)
       setTimeout(() => {
         setStyle(" opacity-[1] !left-[50%]")
@@ -49,7 +61,7 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
       const timer = setTimeout(() => setVisiable(false), 400)
       return () => clearTimeout(timer)
     }
-  }, [dockCreationOpened])
+  }, [dockUpdateOpened])
 
   function validateInputs() {
     let valid = 0
@@ -78,7 +90,7 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
       try {
         const response = await api.post("/api/rooms/", dockData)
         console.log(response.data)
-        setDockCreationOpened(!dockCreationOpened)
+        setDockUpdateOpened(!dockUpdateOpened)
         setDockData({
           title: "",
           body: "",
@@ -97,11 +109,11 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
     function handleClickOutside(event) {
       if ( componentRef.current && !componentRef.current.contains(event.target)) {
         
-        setDockCreationOpened(false)
+        setDockUpdateOpened(false)
       }
     }
 
-    if (dockCreationOpened) {
+    if (dockUpdateOpened) {
       document.addEventListener("mousedown", handleClickOutside)
     } else {
       document.removeEventListener("mousedown", handleClickOutside)
@@ -110,7 +122,7 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [dockCreationOpened])
+  }, [dockUpdateOpened])
 
   if (!visiable) {
     return null
@@ -209,7 +221,7 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
         </div>
       </div>
 
-      <button className="rounded-none ">Submit</button>
+      <button className="rounded-none ">Update</button>
     </form>
   )
 }

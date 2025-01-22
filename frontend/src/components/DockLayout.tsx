@@ -1,19 +1,26 @@
 
 import { useState } from 'react';
 import pfp from '../assets/pfp.png'
+import { useNavigate } from 'react-router';
 
 import api from '../api'
 
 interface DockLayoutProps {
     dockData: {};
     userData: {};
+    dockUpdateOpened: boolean;
+    setDockUpdateOpened: Dispatch<SetStateAction<boolean>>;
     refetchDocksSignal: number;
-    setRefetchDocksSignal: Dispatch<SetStateAction<number>>
+    setRefetchDocksSignal: Dispatch<SetStateAction<number>>;
 }
 
 
 
-export default function DockLayout({dockData, userData, refetchDocksSignal, setRefetchDocksSignal}: DockLayoutProps) {
+export default function DockLayout({dockData, userData, 
+    dockUpdateOpened, setDockUpdateOpened,
+    refetchDocksSignal, setRefetchDocksSignal}: DockLayoutProps) {
+
+    const navigate = useNavigate()
     
     const [isFollowed, setIsFollowed] = useState(false)
     
@@ -69,16 +76,39 @@ export default function DockLayout({dockData, userData, refetchDocksSignal, setR
 
                 userData?.username === dockData?.creator?.username ?
                 
-                <button onClick={handleDockDelete}
-                    className={` 
-                        px-4 !pl-4 text-[#cdc6c6] bg-[#ee1a1a89] hover:bg-[#92252589]
-                        py-1 rounded-[6px] mb-auto follow-button text-sm
-                    
-                    
-                    `}
-                    >
-                    Delete
-                </button>
+                <div>
+                    <button onClick={()=>{
+                        setDockUpdateOpened(!dockUpdateOpened)
+
+                        let currentUrl = window.location.href
+                        let url = currentUrl.slice(curr, 10)
+                        console.log(url)
+
+                        
+                        
+                    }}
+                        disabled={dockUpdateOpened}
+                        className={`
+                            px-4 !pl-4 text-[#cdc6c6] bg-[#049b3195] hover:bg-[#1c673395]
+                            py-1 rounded-[6px] mb-auto follow-button text-sm mr-3
+                        
+                        
+                        `}
+                        >
+                        Update
+                    </button>
+                    <button onClick={handleDockDelete}
+                        className={` 
+                            px-4 !pl-4 text-[#cdc6c6] bg-[#ee1a1a89] hover:bg-[#92252589]
+                            py-1 rounded-[6px] mb-auto follow-button text-sm
+                        
+                        
+                        `}
+                        >
+                        Delete
+                    </button>
+
+                </div>
                 :
                 <button
                     className={`${

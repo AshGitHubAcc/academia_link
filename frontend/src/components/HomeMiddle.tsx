@@ -6,7 +6,10 @@ import { useEffect, useState } from "react"
 
 
 
-export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, refetchDocksSignal, setRefetchDocksSignal, userData}) {
+export default function HomeMiddle({
+    dockCreationOpened, setDockCreationOpened,
+    dockUpdateOpened, setDockUpdateOpened,
+    refetchDocksSignal, setRefetchDocksSignal, userData}) {
     const [searchParams] = useSearchParams()
     const [docks, setDocks] = useState([])
 
@@ -58,6 +61,7 @@ export default function HomeMiddle({dockCreationOpened, setDockCreationOpened, r
 
 
                 <DockLayout key={index} dockData={ele} userData={userData}
+                dockUpdateOpened={dockUpdateOpened} setDockUpdateOpened={setDockUpdateOpened}
                 refetchDocksSignal={refetchDocksSignal} setRefetchDocksSignal={setRefetchDocksSignal}
 
                 
