@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef } from "react"
+import { useNavigate } from 'react-router'
+
 import api from "../api"
 
 interface CreateDockProps {
@@ -10,32 +12,46 @@ interface CreateDockProps {
 
 export default function UpdateDock({ dockUpdateOpened, setDockUpdateOpened, refetchDocksSignal, setRefetchDocksSignal,}: CreateDockProps) {
 
-
   const [style, setStyle] = useState("")
   const [visiable, setVisiable] = useState(false)
   const [allTopics, setAllTopics] = useState([])
   const componentRef = useRef(null)
+  
+  const [dockData, setDockData] = useState({})
+  const [errorTitle, setErrorTitle] = useState("*")
+  const [errorTopic, setErrorTopic] = useState("*")
 
-  const [dockData, setDockData] = useState({
-    title: "",
-    body: "",
-    topic: "",
-  })
+
 
 
   async function fetchDock() {
-
     try {
-      
-      // const response = await api.get(`/api/rooms/${}`)
+
+      const queryStrings = new URLSearchParams(window.location.search)
+      const dockId = queryStrings.get('updateDockId')
+
+
+      const response = await api.get(`/api/rooms/${dockId}`)
+      console.log(response.data)
+
+      setDockData(response.data)
+      // setDockData({
+      //   title: response.data.title,
+      //   body: response.data.body,
+      //   topic: response.data.topic,
+      //   id: response.data.id
+      // })
 
     } catch (error) {
       
     }
   }
 
-  const [errorTitle, setErrorTitle] = useState("*")
-  const [errorTopic, setErrorTopic] = useState("*")
+  useEffect(()=>{
+    if (dockUpdateOpened) {
+      fetchDock()
+    }
+  },[dockUpdateOpened])
 
   async function fetchMainTopics() {
     try {
@@ -51,16 +67,18 @@ export default function UpdateDock({ dockUpdateOpened, setDockUpdateOpened, refe
   }, [dockData])
 
   useEffect(() => {
-    if (dockUpdateOpened) {
-      setVisiable(true)
-      setTimeout(() => {
-        setStyle(" opacity-[1] !left-[50%]")
-      }, 50)
-    } else {
-      setStyle("opacity-[0]")
-      const timer = setTimeout(() => setVisiable(false), 400)
-      return () => clearTimeout(timer)
-    }
+
+      if (dockUpdateOpened) {
+        setVisiable(true)
+        setTimeout(() => {
+          setStyle(" opacity-[1] !left-[50%]")
+        }, 50)
+      }
+      else {
+        setStyle("opacity-[0]")
+        const timer = setTimeout(() => setVisiable(false), 400)
+        return () => clearTimeout(timer)
+      }
   }, [dockUpdateOpened])
 
   function validateInputs() {
@@ -85,43 +103,65 @@ export default function UpdateDock({ dockUpdateOpened, setDockUpdateOpened, refe
 
   async function handleSubmit(e) {
     e.preventDefault()
-
+    
     if (validateInputs()) {
       try {
-        const response = await api.post("/api/rooms/", dockData)
+
+
+        const response = await api.patch(`/api/rooms/${dockData?.id}/`, dockData)
+        console.log("========DockData========")
+        console.log(dockData)        
+        console.log("========Response========")
         console.log(response.data)
+        console.log("=====================")
+
+
+        
         setDockUpdateOpened(!dockUpdateOpened)
-        setDockData({
-          title: "",
-          body: "",
-          topic: "",
-        })
-        setErrorTitle("*")
-        setErrorTopic("*")
+
+        // setDockData({
+        //   title: "",
+        //   body: "",
+        //   topic: "",
+        // })
+        // setErrorTitle("*")
+        // setErrorTopic("*")
         setRefetchDocksSignal(refetchDocksSignal + 1)
+
+        // console.log("submitted")
+        
+
       } catch (error) {
+        console.log(dockData)
+
         console.log("ERROR:", error)
       }
     }
   }
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if ( componentRef.current && !componentRef.current.contains(event.target)) {
+    // function handleClickOutside(event) {
+    //   if ( componentRef.current && !componentRef.current.contains(event.target)) {
         
-        setDockUpdateOpened(false)
-      }
-    }
+    //     setDockUpdateOpened(false)
+    //   }
+    // }
 
-    if (dockUpdateOpened) {
-      document.addEventListener("mousedown", handleClickOutside)
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
+    // if (dockUpdateOpened) {
+    //   document.addEventListener("mousedown", handleClickOutside)
+    // } else {
+    //   document.removeEventListener("mousedown", handleClickOutside)
+      
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
+    //   const url = window.location.href
+    //   if (url.includes('updateDockId')) {
+    //     navigate('/home')
+    //   }
+    // }
+    
+    // return () => {
+    //   document.removeEventListener("mousedown", handleClickOutside)
+    // }
   }, [dockUpdateOpened])
 
   if (!visiable) {
@@ -154,7 +194,8 @@ export default function UpdateDock({ dockUpdateOpened, setDockUpdateOpened, refe
           </label>
           <textarea
             name="title"
-            value={dockData.title}
+            value={dockData?.title}
+
             onChange={(e) =>
               setDockData({ ...dockData, title: e.target.value })
             }
@@ -205,14 +246,16 @@ export default function UpdateDock({ dockUpdateOpened, setDockUpdateOpened, refe
           <div className="flex gap-5">
             <select
               name="topic"
-              onChange={(e) =>
-                setDockData({ ...dockData, topic: e.target.value })
-              }
-              value={dockData.topic}
+              value={dockData?.topic?.id}
+
+              onChange={(e) => (
+                setDockData({...dockData,topic: allTopics.find(topic => topic.id === parseInt(e.target.value)) || dockData.topic
+                })
+              )}
               className="px-4 py-2 rounded-md outline-none"
             >
               {allTopics.map((ele, index) => (
-                <option key={index} value={ele?.name}>
+                <option key={index} value={ele?.id}>
                   {ele?.name}
                 </option>
               ))}

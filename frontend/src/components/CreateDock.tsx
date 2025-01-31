@@ -96,7 +96,6 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
   useEffect(() => {
     function handleClickOutside(event) {
       if ( componentRef.current && !componentRef.current.contains(event.target)) {
-        
         setDockCreationOpened(false)
       }
     }

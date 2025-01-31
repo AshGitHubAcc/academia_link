@@ -1,5 +1,4 @@
 
-
 import { useEffect, useState } from 'react'
 
 import Header from "../components/Header"
@@ -11,6 +10,8 @@ import CreateDock from '../components/CreateDock'
 import UpdateDock from '../components/UpdateDock'
 
 export default function Home() {
+
+
     const [dockCreationOpened, setDockCreationOpened] = useState(false);
     const [refetchDocksSignal, setRefetchDocksSignal] = useState(0);
     const [dockUpdateOpened, setDockUpdateOpened] = useState(false);
@@ -22,7 +23,12 @@ export default function Home() {
 
         dockCreationOpened ? document.body.style.overflow = 'hidden' : document.body.style.overflow = ''
         return () => { document.body.style.overflow = '' }
-    }, [dockCreationOpened])
+    }, [dockCreationOpened, dockUpdateOpened])
+
+
+
+
+
 
 
 
@@ -35,6 +41,7 @@ export default function Home() {
 
             <div className="flex min-h-[90%] w-full pt-24 justify-between">
                 <HomeLeft />
+
                 <HomeMiddle
                     dockCreationOpened={dockCreationOpened}
                     setDockCreationOpened={setDockCreationOpened}

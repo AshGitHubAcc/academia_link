@@ -61,7 +61,9 @@ class MessageSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     participant_count = serializers.IntegerField(source='participants.count', read_only=True)
     creator = UserSerializer(read_only=True)
+
     topic = TopicSerializer(read_only=True)
+    # topic = serializers.PrimaryKeyRelatedField(queryset=Topic.objects.all())
 
     
     class Meta:

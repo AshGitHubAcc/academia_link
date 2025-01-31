@@ -1,14 +1,14 @@
+import { useNavigate } from 'react-router'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import pfp from '../assets/pfp.png'
-import { useNavigate } from 'react-router';
 
 import api from '../api'
 
 interface DockLayoutProps {
-    dockData: {};
+    dockData: {}
     userData: {};
-    dockUpdateOpened: boolean;
+    dockUpdateOpened: boolean
     setDockUpdateOpened: Dispatch<SetStateAction<boolean>>;
     refetchDocksSignal: number;
     setRefetchDocksSignal: Dispatch<SetStateAction<number>>;
@@ -21,6 +21,8 @@ export default function DockLayout({dockData, userData,
     refetchDocksSignal, setRefetchDocksSignal}: DockLayoutProps) {
 
     const navigate = useNavigate()
+
+
     
     const [isFollowed, setIsFollowed] = useState(false)
     
@@ -51,9 +53,17 @@ export default function DockLayout({dockData, userData,
         } catch (error) {
             console.log("Error: ", error)
         }
-
-
     }
+
+
+    function handleDockUpdate() {
+        setDockUpdateOpened(!dockUpdateOpened)
+        navigate(`/home?updateDockId=${dockData?.id}`)
+        
+    }
+
+
+
 
     return (
 
@@ -77,16 +87,7 @@ export default function DockLayout({dockData, userData,
                 userData?.username === dockData?.creator?.username ?
                 
                 <div>
-                    <button onClick={()=>{
-                        setDockUpdateOpened(!dockUpdateOpened)
-
-                        let currentUrl = window.location.href
-                        let url = currentUrl.slice(curr, 10)
-                        console.log(url)
-
-                        
-                        
-                    }}
+                    <button onClick={handleDockUpdate}
                         disabled={dockUpdateOpened}
                         className={`
                             px-4 !pl-4 text-[#cdc6c6] bg-[#049b3195] hover:bg-[#1c673395]
