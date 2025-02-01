@@ -7,7 +7,6 @@ import HomeMiddle from '../components/HomeMiddle'
 import HomeRight from '../components/HomeRight'
 
 import CreateDock from '../components/CreateDock'
-import UpdateDock from '../components/UpdateDock'
 
 export default function Home() {
 
@@ -33,13 +32,17 @@ export default function Home() {
 
 
 
+    
 
 
     return (
-        <div className="w-full h-auto bg-[#303030b9] relative">
-            <Header />
+        <div className="w-full h-auto bg-[#3a3a3ab9]  ">
 
-            <div className="flex min-h-[90%] w-full pt-24 justify-between">
+            <Header />
+                
+            
+
+            <div className="flex min-h-[90%] w-full pt-24 justify-between ">
                 <HomeLeft />
 
                 <HomeMiddle
@@ -57,23 +60,13 @@ export default function Home() {
                 <HomeRight />
             </div>
 
+
             <CreateDock
                 dockCreationOpened={dockCreationOpened}
                 setDockCreationOpened={setDockCreationOpened}
                 refetchDocksSignal={refetchDocksSignal}
                 setRefetchDocksSignal={setRefetchDocksSignal}
             />
-
-            <UpdateDock
-                dockUpdateOpened={dockUpdateOpened}
-                setDockUpdateOpened={setDockUpdateOpened}
-                refetchDocksSignal={refetchDocksSignal}
-                setRefetchDocksSignal={setRefetchDocksSignal}
-            />
-
-
-
-
         </div>
     );
 }

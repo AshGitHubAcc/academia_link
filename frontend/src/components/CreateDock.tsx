@@ -15,6 +15,7 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
   const [visiable, setVisiable] = useState(false)
   const [allTopics, setAllTopics] = useState([])
   const componentRef = useRef(null)
+  const [submited, setSubmitted] = useState(false)
 
   const [dockData, setDockData] = useState({
     title: "",
@@ -96,6 +97,7 @@ export default function CreateDock({ dockCreationOpened, setDockCreationOpened, 
   useEffect(() => {
     function handleClickOutside(event) {
       if ( componentRef.current && !componentRef.current.contains(event.target)) {
+        
         setDockCreationOpened(false)
       }
     }

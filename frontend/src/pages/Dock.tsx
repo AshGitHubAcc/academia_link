@@ -1,266 +1,227 @@
-
-// import { useState } from 'react';
-// import { Send, Plus, Smile, Image, AtSign, Hash } from 'lucide-react';
-
-// export default function Dock() {
-//   const [message, setMessage] = useState('');
-  
-//   // Sample data - in real app this would come from props or API
-//   const messages = [
-//     { id: 1, user: 'Alex Kim', content: "Hey everyone! How's the project going?", time: '2:30 PM', avatar: '/api/placeholder/40/40' },
-//     { id: 2, user: 'Sarah Chen', content: 'Making good progress! Just pushed some updates.', time: '2:31 PM', avatar: '/api/placeholder/40/40' },
-//     { id: 3, user: 'Mike Johnson', content: "I'll review them soon.", time: '2:35 PM', avatar: '/api/placeholder/40/40' },
-//   ];
-
-//   const channels = [
-//     { id: 1, name: 'general' },
-//     { id: 2, name: 'random' },
-//     { id: 3, name: 'project-updates' },
-//   ];
-
-//   const onlineUsers = [
-//     { id: 1, name: 'Alex Kim', status: 'online' },
-//     { id: 2, name: 'Sarah Chen', status: 'online' },
-//     { id: 3, name: 'Mike Johnson', status: 'idle' },
-//   ];
-
-//   return (
-//     <div className="flex h-screen bg-gray-800">
-//       {/* Left Sidebar - Channels */}
-//       <div className="w-64 bg-gray-900 flex flex-col">
-//         <div className="p-4 border-b border-gray-700">
-//           <h1 className="text-white font-bold text-xl">Team Chat</h1>
-//         </div>
-//         <div className="p-4">
-//           <h2 className="text-gray-400 uppercase text-sm font-semibold mb-2">Channels</h2>
-//           {channels.map(channel => (
-//             <div key={channel.id} className="flex items-center text-gray-300 hover:bg-gray-700 p-2 rounded cursor-pointer">
-//               <Hash size={18} className="mr-2" />
-//               {channel.name}
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-
-//       {/* Main Chat Area */}
-//       <div className="flex-1 flex flex-col">
-//         {/* Chat Header */}
-//         <div className="bg-gray-800 p-4 border-b border-gray-700">
-//           <div className="flex items-center">
-//             <Hash size={24} className="text-gray-400 mr-2" />
-//             <h2 className="text-white font-semibold">general</h2>
-//           </div>
-//         </div>
-
-//         {/* Messages Area */}
-//         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-700">
-//           {messages.map(msg => (
-//             <div key={msg.id} className="flex items-start space-x-3">
-//               <img src={msg.avatar} alt={msg.user} className="w-10 h-10 rounded-full" />
-//               <div>
-//                 <div className="flex items-baseline space-x-2">
-//                   <span className="font-semibold text-white">{msg.user}</span>
-//                   <span className="text-xs text-gray-400">{msg.time}</span>
-//                 </div>
-//                 <p className="text-gray-200 mt-1">{msg.content}</p>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-
-//         {/* Message Input */}
-//         <div className="p-4 bg-gray-800">
-//           <div className="flex items-center bg-gray-700 rounded-lg p-2">
-//             <Plus className="text-gray-400 w-6 h-6 mx-2 cursor-pointer hover:text-gray-200" />
-//             <Image className="text-gray-400 w-6 h-6 mx-2 cursor-pointer hover:text-gray-200" />
-//             <input
-//               type="text"
-//               value={message}
-//               onChange={(e) => setMessage(e.target.value)}
-//               placeholder="Type a message..."
-//               className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none mx-2"
-//             />
-//             <Smile className="text-gray-400 w-6 h-6 mx-2 cursor-pointer hover:text-gray-200" />
-//             <Send className="text-gray-400 w-6 h-6 mx-2 cursor-pointer hover:text-gray-200" />
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Right Sidebar - Online Users */}
-//       <div className="w-64 bg-gray-900 p-4">
-//         <h2 className="text-gray-400 uppercase text-sm font-semibold mb-4">Online - {onlineUsers.length}</h2>
-//         {onlineUsers.map(user => (
-//           <div key={user.id} className="flex items-center text-gray-300 mb-3">
-//             <div className="relative">
-//               <img src="/api/placeholder/32/32" alt={user.name} className="w-8 h-8 rounded-full" />
-//               <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900 
-//                 ${user.status === 'online' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-//             </div>
-//             <span className="ml-2">{user.name}</span>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
+import { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import Header from '../components/Header';
 import api from '../api'
-import image from '../../public/vite.svg'
-import { useParams } from 'react-router'
-import { useEffect, useState } from 'react'
-import { format } from 'date-fns'
-import TextareaAutosize from 'react-textarea-autosize'
 
+
+import testImage from '../assets/pfp.png'
+
+interface Dock {
+  id: number;
+  title: string;
+  topic: {
+    name: string;
+  };
+  participants: {
+    id: number;
+    name: string;
+  }[];
+}
 
 export default function Dock() {
-    const { id } = useParams()
-    const [dock, setDock] = useState({})
-    const [messages, setMessages] = useState([])
-    const [sendingMessage, setSendingMessage] = useState('')
+  const params = useParams();
+  const roomId = params.id;
 
+  let text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not onmasd"
 
-    const [messageSent, setMessageSent] = useState(0)
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [dockData, setDockData] = useState<Dock | null>(null);
+  const [isJoined, setIsJoined] = useState(false);
+  const messagesEndRef = useRef(null);
 
+  async function fetchDockData() {
+    try {
 
-    async function fetchData() {
-        try {
-
-            const response = await api.get(`/api/rooms/${parseInt(id)}/`)
-            
-            setDock(response.data)
-            
-        } catch (error) {
-            console.log(error)
-        }
+        const response = await api.get(`/api/rooms/${roomId}`)
+        console.log(response.data)
+      setDockData(response.data);
+    } catch (error) {
+      console.log("ERROR: ", error);
     }
-    async function fetchAllMessages() {
-        try {
+  }
 
-            const response = await api.get(`/api/rooms/${parseInt(id)}/messages/`)
-            setMessages(response.data.results)
-
-        } catch (error) {
-            console.log(error)
-        }
+  async function fetchMessages() {
+    try {
+      const initialMessages = [
+        {
+          id: 1,
+          sender: {
+            id: 1,
+            name: "John Doe",
+            username: "john.doe@example.edu",
+          },
+          body: "Hello everyone! Welcome to the chat room.",
+          created_at: "2023-10-01T10:00:00Z",
+        },
+        {
+          id: 2,
+          sender: {
+            id: 2,
+            name: "Jane Smith",
+            username: "jane.smith@example.edu",
+          },
+          body: "Hi John! Glad to be here.",
+          created_at: "2023-10-01T10:05:00Z",
+        },
+      ];
+      setMessages(initialMessages);
+    } catch (error) {
+      console.log("ERROR: ", error);
     }
+  }
 
-    useEffect(()=>{
-        fetchAllMessages()
-    },[])
+  useEffect(() => {
+    fetchDockData();
+    fetchMessages();
+  }, []);
 
-    useEffect(()=>{
-        console.log(messages)
-    },[messages])
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
+  function handleJoin() {
+    setIsJoined(true)
+  };
 
+   function handleSendMessage(e) {
+    e.preventDefault(); 
+    if (!newMessage.trim()) return;
 
-    useEffect(()=>{
-        fetchData()
-        // console.log(messages)
+    const newMsg = {
+      id: messages.length + 1,
+      sender: {
+        id: 3,
+        name: "Current User",
+        username: "user@example.edu",
+      },
+      body: newMessage,
+      created_at: new Date().toISOString(),
+    };
 
-    }, [messageSent])
+    setMessages([...messages, newMsg]);
+    setNewMessage("");
+  };
 
+  return (
+    <div className="flex flex-col h-screen bg-[#2d2e2f]">
+      <Header />
 
-    async function handleMessageSubmit(e) {
-        e.preventDefault()
-
-        try {
-            const response = await api.post(`/api/rooms/${id}/messages/`, {
-                'body': sendingMessage,
-            })
-            
-            if (response.data.message === "successful") {
-                console.log("Server response: request valid\n", response.data);
-                setMessageSent(messageSent+1)
-
-            } else {
-                console.log("Server response: request invalid\n", response.data);
-            }
-            
-        } catch (error) {
-            console.error("=========== API request error ===========\n", error.message)
-            // server error
-        }
-    }
-
-    async function handleMessageDelete(e,message_id) {
-        e.preventDefault()
-
-        try {
-            const response = await api.delete(`/api/rooms/${id}/messages/${message_id}/`)
-            
-            if (response.data.message === "successful") {
-                console.log("Server response: request valid\n", response.data);
-                setMessageSent(messageSent+1)
-
-            } else {
-                console.log("Server response: request invalid\n", response.data);
-            }
-            
-        } catch (error) {
-            console.error("=========== API request error ===========\n", error.message)
-            // server error
-        }
-
-    }
-
-    const messages123 = [
-    { id: 1, user: 'Alex Kim', content: "Hey everyone! How's the project going?", time: '2:30 PM', avatar: '/api/placeholder/40/40' },
-    { id: 2, user: 'Sarah Chen', content: 'Making good progress! Just pushed some updates.', time: '2:31 PM', avatar: '/api/placeholder/40/40' },
-    { id: 3, user: 'Mike Johnson', content: "I'll review them soon.", time: '2:35 PM', avatar: '/api/placeholder/40/40' },
-    ];
-
-    return (
-
-        <div className="h-max-window bg-gray-700 flex">
-            <div className="bg-gray-500 h-full flex-1">   
-                asd
+      <div className="flex-1 flex overflow-hidden p-5 mx-52">
+        <div className="flex-1 bg-[#454748] rounded-lg mr-4 flex flex-col overflow-hidden">
+          <div className="p-4 bg-[#3a3a3a] rounded-t-lg flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <a href="/home" className="text-[#cbc5c5] hover:text-[#acaaaa]">
+                <svg
+                  version="1.1"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="24"
+                  viewBox="0 0 32 32"
+                >
+                  <path
+                    fill="currentColor"
+                    d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"
+                  ></path>
+                </svg>
+              </a>
+              <h3 className="text-xl font-bold text-[#cbc5c5]">{dockData?.creator?.name}'s Dock</h3>
             </div>
+            {!isJoined && (
+              <button
+                onClick={handleJoin}
+                className="bg-[#1a68eedb] text-[#cdc6c6] px-4 py-2 rounded-md hover:bg-[#264881] transition-colors"
+              >
+                Join Dock
+              </button>
+            )}
+          </div>
 
-            <div className="bg-gray-600 h-full flex-[3] flex flex-col">
-                <div className="flex-[10]">
-
-                {messages?.map((ele, index)=> (
-                    <div className="flex border p-5 gap-10" key={index}>
+            <div className="flex-1 overflow-y-auto p-7 ">
+                <div className="mb-4">
+                    <div className="flex items-center">
+                        {/* <img src={testImage} alt="" className="w-14 rounded-2xl my-2 mr-5" />
+                        <h3 className="flex-1 text-2xl font-bold text-[#cbc5c5]">{dockData?.title}</h3>
+                        <p className="text-gray-400">2:34 PM, Jan 15th 2024</p> */}
+                        <img src={testImage} alt="" className="w-20 rounded-2xl my-2 mr-5" />
                         <div>
-                            <img src={image} alt="" />
-                        </div>
-                        <div className='flex flex-col gap-2'>
-                            
-                            <div className='underline'>
-                                {ele?.sender?.username} --- {format(new Date(ele?.created_at), 'hh:mm a, MM/dd/yyyy')}
+                            <h3 className="flex-1 text-2xl font-bold text-[#cbc5c5]">{dockData?.title}</h3>
+                            <p className="text-gray-400">{dockData?.creator?.username}</p>
+                            <p className="text-gray-400">2:34 PM, Jan 15th 2024</p>
 
-                            </div>
-                            
-                            <div>{ele?.body}</div>
-                            {/* <TextareaAutosize className='w-full h-auto' value={editMessage} onChange={  (e)=>setEditMessage(e.target.value)}/> */}
-
-                            <div>
-                                <button >Edit</button>
-                                <button onClick={(e)=>handleMessageDelete(e, ele?.id)}>Delete</button>
-                            </div>
+                            {/* <p className="text-gray-400">#Math</p> */}
 
                         </div>
                     </div>
-                ))}
-                    
+                    <p className="py-1 text-[#d4d4d4] text-[15px]">{text.length < 650 ? text : text.slice(0,640)} {
+                        text.length < 650 ? null : <a className="inline-block text-blue-500 underline ">... expand</a>
 
-
+                    }</p>
+                        
+                    <p className="text-[#acaaaa] ">#{dockData?.topic?.name}</p>
                 </div>
 
-
-                <form action="" className="bg-gray-700 border flex-1 flex" onSubmit={handleMessageSubmit}>
-                    <textarea name="message" value={sendingMessage} onChange={(e)=>setSendingMessage(e.target.value)} className='h-full w-full bg-gray-700' placeholder='Write message...'></textarea>
-                    <button>Send</button>
-
-                </form>
-                
+                <div className="space-y-4">
+                {messages.map((message) => (
+                    <div key={message.id} className="flex flex-col bg-[#535353] p-5">
+                        <div className="flex items-center gap-2 ">
+                            <div className="w-8 h-8 bg-red-500 rounded-full"></div>
+                            <div className="flex flex-col">
+                            <span className="text-[#cbc5c5] font-semibold">
+                                @{message.sender.username}
+                            </span>
+                            <span className="text-[#979292] text-sm">
+                                {new Date(message.created_at).toLocaleTimeString()}
+                            </span>
+                            </div>
+                        </div>
+                        <p className="text-[#cbc5c5] mt-1">{message.body}</p>
+                    </div>
+                ))}
+                <div ref={messagesEndRef} />
+                </div>
             </div>
 
-            <div className="bg-gray-500 h-full flex-1">
-                asd
-            </div>
+          {isJoined && (
+            <form onSubmit={handleSendMessage} className="p-4 bg-[#3a3a3a] rounded-b-lg">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Write your message here..."
+                  className="flex-1 bg-[#454748] text-[#cbc5c5] p-2 rounded-md focus:outline-none placeholder:text-[#78787c]"
+                />
+                <button
+                  type="submit"
+                  className="bg-[#1a68eedb] text-[#cdc6c6] px-4 py-2 rounded-md hover:bg-[#264881] transition-colors"
+                >
+                  Send
+                </button>
+              </div>
+            </form>
+          )}
         </div>
-    )
-}
 
+        <div className="w-1/4 bg-[#454748] rounded-lg p-4 overflow-y-auto">
+          <h3 className="text-xl font-bold text-[#cbc5c5] mb-4">
+            Participants ({dockData?.participants?.length} Joined)
+          </h3>
+          <div className="space-y-2">
+            {dockData?.participants?.map((participant) => (
+              <div key={participant.id} className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-red-500 rounded-full"></div>
+                <div className="flex flex-col">
+                  <span className="text-[#cbc5c5]">{participant.name}</span>
+                  <span className="text-[#979292] text-sm">
+                    @{participant.name.toLowerCase()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

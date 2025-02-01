@@ -1,64 +1,190 @@
-import { useParams, useLocation, useNavigate } from "react-router"
+import { useEffect, useState, useRef } from "react"
+
 import api from "../api"
-import { useState } from "react"
+import { useNavigate } from "react-router"
+import { useParams } from 'react-router-dom';
+
+
+
 
 export default function UpdateDock() {
-
-    const navigate = useNavigate()
-    const location = useLocation()
-    const dockData = location.state
-
-    const [dockInfo, setDockInfo] = useState({
-        title: dockData.title,
-        body: dockData.body,
-    })
-    const [error, setError] = useState(false)
+  const navigate = useNavigate()
+  const params = useParams()
 
 
+  const [allTopics, setAllTopics] = useState([])
+  const componentRef = useRef(null)
+  
+  const [dockData, setDockData] = useState({})
+  const [errorTitle, setErrorTitle] = useState("*")
+  const [errorTopic, setErrorTopic] = useState("*")
 
-    async function handleSubmit(e) {
 
-        e.preventDefault()
-        if (dockInfo.title === '') {
-            setError(true)
-            return null
-        }
-        setError(false)
 
-        
-        try {
+  
+  async function fetchDock() {
+    try {
+      const response = await api.get(`/api/rooms/${params.id}`)
+      setDockData(response.data)
 
-            const response = await api.patch(`/api/rooms/${dockData.id}/`, dockInfo)
-            
-            if (response.data.message === "successful") {
-                console.log("Server response: request valid\n", response.data);
-                navigate('/home')
-            } else {
-                console.log("Server response: request invalid\n", response.data);
-            }
-            
-        } catch (error) {
-            console.error("=========== API request error ===========\n", error.message)
-            // server error
-        }
+    } catch (error) {
+      console.log('ERROR: ', error.response.statusText)
+    }
+  }
 
+
+  async function fetchMainTopics() {
+    try {
+      const response = await api.get("/api/topics/")
+      setAllTopics(response.data.results)
+    } catch (error) {
+      console.log('ERROR: ', error.response.statusText)
+    }
+  }
+
+  useEffect(() => {
+    fetchDock()
+    fetchMainTopics()
+  }, [])
+
+
+
+  function validateInputs() {
+    let valid = 0
+
+    if (dockData.title.trim() === "") {
+      setErrorTitle("* cannot be empty")
+    } else {
+      setErrorTitle("valid")
+      valid++
     }
 
+    if (dockData.topic === "") {
+      setErrorTopic("* must choose")
+    } else {
+      valid++
+      setErrorTopic("valid")
+    }
 
-    return (
-        <div className="h-[500px] flex justify-center items-center">
-            <form action="" className="flex bg-gray-600 p-10 gap-4" onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="title">Title</label>
-                    <input name='title' value={dockInfo.title} onChange={(e)=> setDockInfo({...dockInfo, title: e.target.value})} className="flex-grow-0 flex-shrink-0 w-52 h-10 bg-gray-700"/>
-                    {error ? <div>Title cant be empty</div> : null}
-                </div>
+    return valid === 2
+  }
 
-                <label htmlFor="body">Body</label>
-                <textarea name='body' value={dockInfo.body} onChange={(e)=> setDockInfo({...dockInfo, body: e.target.value})} className="w-[300px] h-52 bg-gray-700"/>
+  async function handleSubmit(e) {
+    e.preventDefault()
+    
+    if (validateInputs()) {
+      try {
 
-                <button type="submit">Submit</button>
-            </form>
+
+        const response = await api.patch(`/api/rooms/${dockData?.id}/`, dockData)
+        navigate('/home')
+
+      } catch (error) {
+        console.log("ERROR:", error)
+      }
+    }
+  }
+
+
+
+  return (
+
+    <form
+
+
+      ref={componentRef}
+      onSubmit={handleSubmit}
+      className={`
+        fixed
+        top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+        bg-[#686767] w-[30%] min-w-[35rem] z-[100] rounded-md
+        h-[540px] dock-creation
+      `}
+    >
+      <div className="flex-1 bg-[#3a3a3a] flex flex-col justify-center items-center p-5 rounded-md rounded-b-none">
+        <div className="flex flex-col">
+          <label
+            htmlFor="title"
+            className="text-[#c6c6c6] font-bold mb-1"
+          >
+            Title{" "}
+            <p className="text-red-500 inline-block text-[0.8rem]">
+              {errorTitle === "valid" ? "" : errorTitle}
+            </p>
+          </label>
+          <textarea
+            name="title"
+            value={dockData?.title}
+
+            onChange={(e) =>
+              setDockData({ ...dockData, title: e.target.value })
+            }
+            placeholder="..."
+            className="
+                    flex-grow-0 text-[#bdbcbc] bg-[#252525] p-5 rounded-[4px] outline-none
+                    transition-all duration-[700ms] ease-in-out w-[300px] 
+                    focus:placeholder:text-[#121212] placeholder:transition-all placeholder:duration-500
+                "
+          ></textarea>
         </div>
-    )
+
+        <div className="flex flex-col mt-5">
+          <label
+            htmlFor="description"
+            className="text-[#c6c6c6] font-bold mb-1"
+          >
+            Description
+          </label>
+          <textarea
+            name="description"
+            value={dockData.body}
+            onChange={(e) =>
+              setDockData({ ...dockData, body: e.target.value })
+            }
+            placeholder="..."
+            className="
+                    flex-grow-0 text-[#a1a1a1] p-5 bg-[#252525]
+                     rounded-[4px] border-blue-500 focus:border-b-2 outline-none
+                    transition-all duration-[700ms] ease-in-out w-[300px] h-[250px]
+                    focus:placeholder:text-[#121212] placeholder:transition-all placeholder:duration-500
+                "
+          ></textarea>
+        </div>
+      </div>
+
+      <div className="flex-1 bg-[#3a3a3a] flex flex-col justify-center items-center  pb-5">
+        <div className="flex flex-col">
+          <label
+            htmlFor="topic"
+            className="text-[#c6c6c6] font-bold mb-1 flex "
+          >
+            Topic{" "}
+            <p className="text-red-500 inline-block text-[0.8rem]">
+              {errorTopic === "valid" ? "" : errorTopic}
+            </p>{" "}
+          </label>
+          <div className="flex gap-5">
+            <select
+              name="topic"
+              value={dockData?.topic?.id}
+
+              onChange={(e) => (
+                setDockData({...dockData, topic: allTopics.find(topic => topic.id === parseInt(e.target.value)) || dockData.topic
+                })
+              )}
+              className="px-4 py-2 rounded-md outline-none"
+            >
+              {allTopics.map((ele, index) => (
+                <option key={index} value={ele?.id}>
+                  {ele?.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>  
+      <button className=" after:h-0  w-full h-14 rounded-md rounded-t-none ">Update</button>
+
+    </form>
+  )
 }
