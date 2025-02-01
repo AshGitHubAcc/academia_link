@@ -64,7 +64,7 @@ export default function HomeLeft() {
     return (
         <div className='h-auto  w-64 flex-col pl-10  mt-16 0'>
             <Link to={`/home`}>
-                <div  className="p-3 font-[550] text-[#cfcfcf] hover:cursor-pointer 
+                <div  className="p-3 font-[550] text-[#afaeae] hover:cursor-pointer 
                 hover:bg-[#444444] hover:text-[#fbfbfb]
                     transition-all duration-200 ease-in-out hover:scale-110 text-xl py-4
                 ">All</div>
@@ -73,7 +73,7 @@ export default function HomeLeft() {
             {allTopics.map((ele: Topics, index: number)=> (
 
                     <Link key={index} to={`/home/?filter_topic_id=${ele.id}`}>
-                        <div  className="p-3 font-[550] text-[#cfcfcf] hover:cursor-pointer 
+                        <div  className="p-3 font-[550] text-[#949393] hover:cursor-pointer 
                         hover:bg-[#444444] hover:text-[#fbfbfb]
                             transition-all duration-200 ease-in-out hover:scale-110 text-xl py-4
                         ">{ele.name}</div>

@@ -48,7 +48,7 @@ export default function Header({loginpage, registerpage}: HeaderProps) {
 
 
     return (
-    <header className="bg-[#171717] p-2 h-20 flex justify-around items-center text-[#ECECEC] relativ w-full z-10 text-[120%]">
+    <header className="bg-[#171717e6] p-2 h-20 flex justify-around items-center text-[#ECECEC] relativ  w-full z-10 text-[120%]">
 
         <div className='flex-1 flex gap-5 justify-start items-center h-full'>
 

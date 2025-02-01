@@ -36,7 +36,7 @@ export default function Home() {
 
 
     return (
-        <div className="w-full h-auto bg-[#3a3a3ab9]  ">
+        <div className="w-full h-auto bg-[#242424b9]  ">
 
             <Header />
                 

@@ -57,7 +57,7 @@ export default function DockLayout({dockData, userData,
         <div 
         
         onClick={()=>navigate(`/dock/${dockData.id}`)}
-        className="mx-auto h-auto w-full bg-[#454748] rounded-xl flex flex-col p-3 mb-5
+        className="mx-auto h-auto w-full bg-[#303030] rounded-xl flex flex-col p-3 mb-5
         hover:bg-[#525456] hover:cursor-pointer transition-all duration-300 ease-in-out">
 
 
@@ -125,11 +125,11 @@ export default function DockLayout({dockData, userData,
 
 
 
-            <div className="flex-col px-1 py-3 text-small text-[#dfd8d8] flex justify-between">
+            <div className="flex-col px-1 py-3 text-small text-[#aaa5a5] flex justify-between">
                 <p className="text-[20px] font-bold">
                     {dockData?.title}
                 </p>
-                <p className="pb-1 text-[#cbc5c5]">{dockData?.body.length > 365 ? dockData?.body.slice(0, 365) + "..." : dockData?.body}</p>
+                <p className="pb-1 text-[#938e8e]">{dockData?.body.length > 365 ? dockData?.body.slice(0, 365) + "..." : dockData?.body}</p>
                 
             </div>
 
